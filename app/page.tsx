@@ -3,11 +3,10 @@ import { DemoShowcase } from "@/components/DemoShowcase";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Nav } from "@/components/Nav";
 import {
-  ArrowUpRightIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon, FlyIcon,
-  GlobeIcon, MicIcon, PlaneIcon, SearchIcon, SparkleIcon, TicketIcon,
+  ArrowUpRightIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon,
+  GlobeIcon, MicIcon, PlaneIcon, SparkleIcon, TicketIcon,
 } from "@/components/Icons";
-import { PromptForm } from "@/components/PromptForm";
-import { Referral } from "@/components/Referral";
+import { SectionMotion } from "@/components/SectionMotion";
 import { SearchPanel } from "@/components/SearchPanel";
 import { Trending } from "@/components/Trending";
 import { BACKERS } from "@/lib/assets";
@@ -40,28 +39,30 @@ const FEATURES = [
 ];
 
 const BOOKING = [
-  { Icon: PlaneIcon, title: "The travel price", copy: "Fares and room rates depend on the option you choose and the supplier’s availability." },
-  { Icon: TicketIcon, title: "Any Mylz service fee", copy: "A Mylz service fee may apply. Check the total and terms before confirming." },
-  { Icon: SearchIcon, title: "The supplier’s rules", copy: "Changes, cancellations, and refunds are subject to the travel provider’s conditions." },
+  { tag: "Flights", title: "Compare the full fare", copy: "Check the route, baggage allowance, and any fees before you choose.", cta: "Search flights and stays", href: "#top", photo: "1539585383997-efd1a743120d" },
+  { tag: "Booking terms", title: "Know what can change", copy: "Review the supplier’s rules for changes, cancellations, and refunds.", cta: "Read booking terms", href: "https://gomylz.com/terms-and-conditions", photo: "1654163600133-452eb7274426" },
+  { tag: "Stays", title: "Find a stay that fits", copy: "Compare room rates, check-in times, and what’s included in your stay.", cta: "Explore stays", href: "#stays", photo: "1571896349842-33c89424de2d" },
 ];
 
 const SAMPLE_REVIEWS = [
-  "I put the dates and budget in one message. That gave me somewhere to start for our Lisbon weekend.",
-  "I wanted a later departure. It was easy to ask for that while looking at the options.",
-  "I already knew the dates, so I used the hotel search and went straight to comparing stays.",
+  { name: "Maya Shah", role: "Product designer", rating: "4.8", photo: "1580489944761-15a19d654956", quote: "I put our dates and budget in one message and had a shortlist for Lisbon in minutes. It was easy to compare the options before deciding." },
+  { name: "Daniel Brooks", role: "Operations manager", rating: "4.9", photo: "1500648767791-00dcc994a43e", quote: "I needed a later departure and a hotel near the station. I could ask for both in the same conversation and narrow down the trip from there." },
+  { name: "Sofia Martin", role: "Marketing consultant", rating: "4.7", photo: "1534528741775-53994a69da69", quote: "I had a few days free and no destination in mind. I compared a couple of city breaks and found one that worked with my dates." },
 ];
 
 export default function HomePage() {
   return (
+    <>
+    <Nav />
     <main className="travel-home">
+      <SectionMotion />
       <section className="hero">
         <HeroMedia />
-        <Nav />
         <div className="hero-inner">
           <div className="hero-grid">
             <div className="hero-head">
               <span className="hero-pill">Talk. Book. Go.</span>
-              <h1>Let's Plan and Go</h1>
+              <h1>Let's Plan and <em>Go</em></h1>
               <p className="hero-sub">Tell mylz where you want to go. Search flights and stays by typing, speaking, or using the search form.</p>
             </div>
           </div>
@@ -76,9 +77,12 @@ export default function HomePage() {
       </ul>
 
       <section className="stay-edit" id="stays" aria-labelledby="stay-title">
-        <div className="section-intro">
-          <h2 id="stay-title">Find your kind of stay.</h2>
-          <p>A beachfront escape, a city weekend, or somewhere with a view. Pick a starting point and make the search your own.</p>
+        <div className="stay-heading">
+          <div className="section-intro">
+            <h2 id="stay-title">Find your kind of stay.</h2>
+            <p>A beachfront escape, a city weekend, or somewhere with a view. Pick a starting point and make the search your own.</p>
+          </div>
+          <Link className="btn-outline sm" href="/#trending">Explore Destinations <ArrowUpRightIcon size={15} /></Link>
         </div>
         <div className="stay-grid">
           {STAYS.map(({ title, prompt, photo, fallback }) => (
@@ -93,7 +97,6 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
-        <div className="stay-end"><Link className="btn-outline sm" href="/#trending">Explore destinations <ArrowUpRightIcon size={15} /></Link></div>
       </section>
 
       <section className="walkthrough" id="demo" aria-labelledby="walkthrough-title">
@@ -141,24 +144,40 @@ export default function HomePage() {
           <p>Mylz connects you with travel suppliers. Review the price and conditions for the option you choose.</p>
         </div>
         <div className="booking-grid">
-          {BOOKING.map(({ Icon, title, copy }) => (
+          {BOOKING.map(({ tag, title, copy, cta, href, photo }) => (
             <article className="booking-card" key={title}>
-              <span className="feature-icon"><Icon size={20} /></span><h3>{title}</h3><p>{copy}</p>
+              <img className="booking-card-photo" src={`https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=900&q=82`} alt="" loading="lazy" />
+              <div className="booking-card-copy">
+                <span className="booking-card-tag">{tag}</span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+                <a className="booking-card-cta" href={href}>{cta} <ArrowUpRightIcon size={14} /></a>
+              </div>
             </article>
           ))}
         </div>
-        <a className="booking-terms" href="https://gomylz.com/terms-and-conditions">Read the booking terms <ArrowUpRightIcon size={14} /></a>
       </section>
 
       <section className="reviews" aria-labelledby="reviews-title">
         <div className="section-intro centered">
-          <h2 id="reviews-title">What travellers might say.</h2>
-          <p>Illustrative testimonials. Each quote is fictional.</p>
+          <h2 id="reviews-title">What Our Customers Say</h2>
+          <p>Fictional testimonials for this preview. Photos are illustrative.</p>
         </div>
         <div className="review-grid">
-          {SAMPLE_REVIEWS.map((quote) => (
-            <figure className="review" key={quote}>
-              <figcaption>Sample testimonial</figcaption><blockquote>“{quote}”</blockquote>
+          {SAMPLE_REVIEWS.map(({ name, role, rating, photo, quote }) => (
+            <figure className="review" key={name}>
+              <details className="review-media">
+                <summary aria-label={`Toggle testimonial preview for ${name}`}>
+                  <img src={`https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1200&h=700&q=82`} alt="" loading="lazy" />
+                  <span className="review-play" aria-hidden="true"><span className="review-play-icon" /></span>
+                </summary>
+                <p className="review-preview">Sample testimonial · Video unavailable</p>
+              </details>
+              <blockquote>“{quote}”</blockquote>
+              <figcaption>
+                <span><strong>{name}</strong><small>{role}</small></span>
+                <span className="review-score" aria-label={`${rating} out of 5 stars`}><span aria-hidden="true">★</span> {rating}/5</span>
+              </figcaption>
             </figure>
           ))}
         </div>
@@ -175,15 +194,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="cta" id="start" aria-labelledby="start-title">
-        <div className="cta-glass">
-          <FlyIcon size={24} />
-          <h2 id="start-title">Where to next?</h2>
-          <p>Start with a destination, a date, or an idea.</p>
-          <PromptForm variant="cta" />
-          <Referral />
-        </div>
-      </section>
     </main>
+    </>
   );
 }

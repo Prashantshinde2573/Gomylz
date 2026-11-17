@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCurrency } from "@/components/CurrencyProvider";
-import { ArrowRightIcon, BagIcon, CalendarXIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
+import { ArrowRightIcon, BagIcon, BedIcon, CalendarIcon, GridIcon, PlaneIcon, SparkleIcon, CalendarXIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
 import { useSpeech } from "@/components/useSpeech";
+import { DESTINATION_PHOTOS, HERO_POSTER } from "@/lib/assets";
 import { cityForPlace } from "@/lib/airports";
 import { fmtDuration, fmtLong, fmtShort, toISO } from "@/lib/dates";
 import { applyFollowUp, type Flight, type Idea, type SearchResult, type Stay, type TripQuery, travellersText } from "@/lib/demo";
@@ -22,6 +23,20 @@ const SEARCH_STEPS = [
 ];
 const PAGE = 6;
 const HOLD_SECONDS = 25 * 60;
+
+const TRIP_STARTERS = [
+  { label: "Flights", Icon: PlaneIcon, prompt: "Find flights to " },
+  { label: "Stays", Icon: BedIcon, prompt: "Find a hotel in " },
+  { label: "Flight + stay", Icon: SuitcaseIcon, prompt: "Plan flights and a hotel in " },
+  { label: "Explore", Icon: GridIcon, prompt: "Suggest places for a long weekend" },
+];
+
+const DESTINATION_STARTERS = [
+  { code: "LIS", label: "Lisbon", detail: "A long weekend", prompt: "Plan flights and a hotel for a long weekend in Lisbon." },
+  { code: "ROM", label: "Rome", detail: "A city break", prompt: "Plan flights and a hotel for three nights in Rome." },
+  { code: "TYO", label: "Tokyo", detail: "A week away", prompt: "Plan flights and a hotel for a week in Tokyo." },
+];
+
 
 export function ChatClient({ id }: { id: string }) {
   const { format, rate, home } = useCurrency();
@@ -45,6 +60,7 @@ export function ChatClient({ id }: { id: string }) {
   const started = useRef(false);
   const offeredLogin = useRef(false);
   const transcriptRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLInputElement>(null);
   const speech = useSpeech(setDraft);
 
   const say = useCallback((role: Message["role"], text: string, toResults = false, ideas?: Idea[]) => {
@@ -163,6 +179,12 @@ export function ChatClient({ id }: { id: string }) {
     else void handle(text);
   }
 
+  function startDraft(prompt: string) {
+    setDraft(prompt);
+    setTab("chat");
+    window.requestAnimationFrame(() => composerRef.current?.focus());
+  }
+
   // Selecting an option keeps the visitor in the workspace.
   function selectFlight(f: Flight) {
     setPicked((p) => ({ ...p, flight: f }));
@@ -209,23 +231,21 @@ export function ChatClient({ id }: { id: string }) {
         <button type="button" role="tab" aria-selected={tab === "chat"} onClick={() => setTab("chat")}>
           Chat
         </button>
-        <button type="button" role="tab" aria-selected={tab === "results"} onClick={() => setTab("results")} disabled={!result && !searching}>
-          Results
+        <button type="button" role="tab" aria-selected={tab === "results"} onClick={() => setTab("results")}>
+          {result || searching ? "Results" : "Trip options"}
         </button>
       </div>
-
-      <p className="chat-note">Demo: airlines, fares and stays here are sample data, and nothing is booked.</p>
 
       <div className="chat-workspace" data-view={tab}>
         <section className="chat-pane" aria-label="Chat">
           <header className="pane-head">
-            <small>Chat</small>
-            <h1>{result?.title ?? "New trip"}</h1>
+            <div><small>Chat</small><h1>{result?.title ?? "New trip"}</h1></div>
+            <span className="chat-heading-icon" aria-hidden="true"><SparkleIcon size={22} /></span>
           </header>
 
           <div className="chat-transcript" ref={transcriptRef}>
             {messages.length === 0 && !searching && (
-              <div className="bubble ai">Where do you want to go? Try “Lisbon for a long weekend, two of us”.</div>
+              <div className="bubble ai">Where would you like to go?</div>
             )}
 
             {messages.map((m) =>
@@ -239,19 +259,22 @@ export function ChatClient({ id }: { id: string }) {
                   <div className="ideas">
                     {m.ideas.map((idea) => (
                       <article key={idea.code} className="idea">
-                        <span className="idea-code" aria-hidden="true">{idea.code}</span>
-                        <div>
+                        <span className="idea-code" aria-hidden="true">
+                          {idea.code}
+                          <img src={DESTINATION_PHOTOS[idea.code] ?? HERO_POSTER} alt="" loading="lazy"
+                            onError={(event) => { event.currentTarget.hidden = true; }} />
+                        </span>
+                        <div className="idea-copy">
                           <strong>{idea.city}</strong>
                           <small>{idea.line}</small>
+                          <small className="idea-dates"><CalendarIcon size={13} /> {fmtShort(idea.out)} – {fmtShort(idea.back)}</small>
+                          <div className="idea-action">
+                            <span><b>{format(idea.fromGBP)}</b> return</span>
+                            <button type="button" className="btn-accent sm" onClick={() => send(idea.prompt)}>
+                              Plan this <ArrowRightIcon size={14} />
+                            </button>
+                          </div>
                         </div>
-                        <p>
-                          from <b>{format(idea.fromGBP)}</b> return
-                          <small>{fmtShort(idea.out)} – {fmtShort(idea.back)}</small>
-                        </p>
-                        <button type="button" className="btn-accent sm btn-fly" onClick={() => send(idea.prompt)}>
-                          Plan this
-                          <FlyIcon size={16} />
-                        </button>
                       </article>
                     ))}
                   </div>
@@ -308,6 +331,7 @@ export function ChatClient({ id }: { id: string }) {
                 Message mylz
               </label>
               <input
+                ref={composerRef}
                 id="chat-input"
                 type="text"
                 autoComplete="off"
@@ -342,19 +366,54 @@ export function ChatClient({ id }: { id: string }) {
             </div>
           )}
           {!searching && !result && (
-            <div className="results-empty">
-              <FlyIcon size={28} />
-              <h2>Your trip options</h2>
-              <p>Ask mylz for a trip to see flights and stays here.</p>
+            <div className="chat-discover">
+              <div className="chat-planner-banner">
+                <img src="/images/chat/flight-at-sunset.webp" alt="" />
+                <div>
+                  <h2>Plan your next trip with <em>mylz</em></h2>
+                  <p>Find flights, stays, and trip ideas in one conversation.</p>
+                </div>
+              </div>
+              <div className="chat-options-heading">
+                <h2>Your trip options</h2>
+              </div>
+              <div className="chat-starters">
+                {TRIP_STARTERS.map(({ label, Icon, prompt }) => (
+                  <button type="button" key={label} onClick={() => startDraft(prompt)}>
+                    <span className="chat-heading-icon" aria-hidden="true"><Icon size={21} /></span>
+                    <strong>{label}</strong>
+                  </button>
+                ))}
+              </div>
+              <div className="chat-destination-ideas">
+                <h3>Destination ideas</h3>
+                <div>
+                  {DESTINATION_STARTERS.map(({ code, label, detail, prompt }) => (
+                    <button type="button" key={code} onClick={() => startDraft(prompt)}>
+                      <img src={DESTINATION_PHOTOS[code] ?? HERO_POSTER} alt="" loading="lazy"
+                        onError={(event) => { event.currentTarget.hidden = true; }} />
+                      <span className="destination-idea-copy">
+                        <span><strong>{label}</strong><small>{detail}</small></span>
+                        <span className="destination-idea-action">Plan <PlaneIcon size={15} /></span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
           {!searching && result && q && (
             <>
-              <header className="pane-head">
-                <small>Results · latest ask</small>
-                <h2>
-                  {kind === "flights" ? `Flights to ${q.to.code} · ${tripLabel.toLowerCase()}` : `Stays in ${destCity}`}
-                </h2>
+              <header className="pane-head trip-results-heading">
+                <div>
+                  <small>Results · latest ask</small>
+                  <h2>{kind === "flights" ? `Flights to ${q.to.code} · ${tripLabel.toLowerCase()}` : `Stays in ${destCity}`}</h2>
+                </div>
+                <img src={DESTINATION_PHOTOS[cityForPlace(q.to.code)?.code ?? ""] ?? HERO_POSTER} alt=""
+                  onError={(event) => {
+                    if (!event.currentTarget.src.endsWith(HERO_POSTER)) event.currentTarget.src = HERO_POSTER;
+                  }}
+                />
               </header>
 
               <div className="kind-tabs" role="tablist" aria-label="Flights or stays">

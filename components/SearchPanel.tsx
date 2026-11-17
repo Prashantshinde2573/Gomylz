@@ -18,7 +18,7 @@ type Pop = "from" | "to" | "dates" | "pax" | null;
 export function SearchPanel() {
   const router = useRouter();
   const { home } = useCurrency();
-  const cardRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const today = useMemo(() => toISO(new Date()), []);
 
   const [mode, setMode] = useState<Mode>("ai");
@@ -48,7 +48,7 @@ export function SearchPanel() {
   useEffect(() => {
     if (!pop) return;
     const onDown = (e: MouseEvent) => {
-      if (!cardRef.current?.contains(e.target as Node)) setPop(null);
+      if (!searchRef.current?.contains(e.target as Node)) setPop(null);
     };
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setPop(null);
     document.addEventListener("mousedown", onDown);
@@ -97,21 +97,20 @@ export function SearchPanel() {
   const dateText = dates.start ? (needsRange ? `${fmtShort(dates.start)} – ${dates.end ? fmtShort(dates.end) : "…"}` : fmtShort(dates.start)) : null;
 
   return (
-    <div className="search-wrap">
-    <div className="search-card" ref={cardRef}>
+    <div className="search-wrap" ref={searchRef}>
+      <div className="sc-modes" role="tablist" aria-label="How to search">
+        <button type="button" role="tab" aria-selected={mode === "ai"} onClick={() => switchMode("ai")}>
+          <SparkleIcon /> <strong>Ask mylzAI</strong>
+        </button>
+        <button type="button" role="tab" aria-selected={mode === "flights"} onClick={() => switchMode("flights")}>
+          <PlaneIcon /> Flights
+        </button>
+        <button type="button" role="tab" aria-selected={mode === "stays"} onClick={() => switchMode("stays")}>
+          <BedIcon /> Stays
+        </button>
+      </div>
+      <div className="search-card">
       <div className="sc-top">
-        <div className="sc-modes" role="tablist" aria-label="How to search">
-          <button type="button" role="tab" aria-selected={mode === "ai"} onClick={() => switchMode("ai")}>
-            <SparkleIcon /> Ask mylzAI
-          </button>
-          <button type="button" role="tab" aria-selected={mode === "flights"} onClick={() => switchMode("flights")}>
-            <PlaneIcon /> Flights
-          </button>
-          <button type="button" role="tab" aria-selected={mode === "stays"} onClick={() => switchMode("stays")}>
-            <BedIcon /> Stays
-          </button>
-        </div>
-
         {mode === "flights" && (
           <div className="sc-opts">
             <fieldset className="sc-trip">
@@ -297,9 +296,8 @@ function Field(props: {
   return (
     <div className={`sc-field${wide ? " is-wide" : ""}`} ref={fieldRef}>
       <button type="button" aria-expanded={open} aria-haspopup="dialog" onClick={onClick}>
-        <span className="sc-ico">{icon}</span>
         <span className="sc-text">
-          <small>{label}</small>
+          <small className="sc-label">{icon}{label}</small>
           <strong className={value ? undefined : "is-empty"}>{value ?? placeholder}</strong>
         </span>
       </button>

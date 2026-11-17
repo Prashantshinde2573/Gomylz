@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
+import { PromptForm } from "@/components/PromptForm";
+import { Referral } from "@/components/Referral";
 import { LOGO } from "@/lib/assets";
 import "./globals.css";
 
@@ -50,15 +52,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="shell" id="top">
             {children}
             <footer className="footer">
-              <div className="footer-brand">
-                <a href="/" aria-label="Mylz home"><img className="footer-logo" src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} loading="lazy" /></a>
-                <p>The best moments in life happen offline.</p>
-              </div>
+              <section className="footer-banner" id="start" aria-labelledby="start-title">
+                <div className="footer-pitch">
+                  <a href="/" aria-label="Mylz home"><img className="footer-logo" src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} loading="lazy" /></a>
+                  <h2 id="start-title">Where to next?</h2>
+                  <p>The best moments in life happen offline.</p>
+                </div>
+                <div className="footer-actions">
+                  <p>Start with a destination, a date, or an idea.</p>
+                  <PromptForm variant="cta" />
+                  <Referral />
+                </div>
+              </section>
               <nav aria-label="Explore Mylz">
                 <strong>Explore</strong>
                 <a href="/#stays">Stays</a>
-                <a href="/#demo">How it works</a>
                 <a href="/#trending">Destinations</a>
+              </nav>
+              <nav aria-label="Trip planning">
+                <strong>Plan</strong>
+                <a href="/#start">Plan a trip</a>
+                <a href="/#demo">See it work</a>
+              </nav>
+              <nav aria-label="Booking help">
+                <strong>Booking help</strong>
+                <a href="/#how">How it works</a>
+                <a href="/#fee">Before you book</a>
                 <a href="/#faq">FAQ</a>
               </nav>
               <nav aria-label="Legal">
@@ -67,7 +86,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="https://gomylz.com/privacy">Privacy</a>
                 <a href="https://gomylz.com/sanctions-compliance">Sanctions compliance</a>
               </nav>
-              <span className="footer-legal">© 2026 Milesfactory Limited · No. 16131941 · IATA TIDS 96192412</span>
+              <div className="footer-legal">
+                <span>© 2026 Milesfactory Limited</span>
+                <span>Company No. 16131941 · IATA TIDS 96192412</span>
+              </div>
             </footer>
           </div>
         </CurrencyProvider>

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { cityForPlace } from "@/lib/airports";
 import { DESTINATION_PHOTOS } from "@/lib/assets";
-import { fmtShort, toISO } from "@/lib/dates";
+import { fmtShort, nightsBetween, toISO } from "@/lib/dates";
 import { type Idea, trendingTrips } from "@/lib/demo";
 import { useCurrency } from "./CurrencyProvider";
-import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "./Icons";
+import { ArrowLeftIcon, ArrowRightIcon } from "./Icons";
 
 /** Priced trips from the visitor's home city. Each card opens a chat with the sentence already written. */
 export function Trending({ initial }: { initial: Idea[] }) {
@@ -32,40 +32,34 @@ export function Trending({ initial }: { initial: Idea[] }) {
       <div className="dest-head">
         <span className="eyebrow">Trending from {city}</span>
         <h2 id="dest-title">See where you could go.</h2>
+        <p>Find a trip that fits your dates, your budget, and the way you like to travel.</p>
+        <small className="dest-note">Sample return fares for one adult.</small>
       </div>
-      <div className="dest-controls">
-        <button type="button" aria-label="Previous destinations" onClick={() => moveRail(-1)}><ArrowLeftIcon size={18} /></button>
-        <button type="button" aria-label="Next destinations" onClick={() => moveRail(1)}><ArrowRightIcon size={18} /></button>
+      <div className="dest-carousel">
+        <div className="dest-grid" ref={rail}>
+          {trips.map((t, i) => (
+            <Link key={t.code} className={`dest-card tone-${i % 3}`} href={`/chat?q=${encodeURIComponent(t.prompt)}`} prefetch={false}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {DESTINATION_PHOTOS[t.code] && <img src={DESTINATION_PHOTOS[t.code]} alt="" loading="lazy" onError={(event) => { event.currentTarget.hidden = true; }} />}
+              <span className="dest-meta"><span>{t.country}</span><span>{nightsBetween(t.out, t.back)} nights</span></span>
+              <span className="dest-text">
+                <strong>{t.city}</strong>
+                <small>
+                  {fmtShort(t.out)} – {fmtShort(t.back)} · {t.line}
+                </small>
+                <b>
+                  from {format(t.fromGBP)} <i>return</i>
+                </b>
+                <span className="dest-explore">Explore Trip</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div className="dest-controls">
+          <button type="button" aria-label="Previous destinations" onClick={() => moveRail(-1)}><ArrowLeftIcon size={18} /></button>
+          <button type="button" aria-label="Next destinations" onClick={() => moveRail(1)}><ArrowRightIcon size={18} /></button>
+        </div>
       </div>
-      <div className="dest-grid" ref={rail}>
-        {trips.map((t, i) => (
-          <Link key={t.code} className={`dest-card tone-${i % 3}`} href={`/chat?q=${encodeURIComponent(t.prompt)}`} prefetch={false}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            {DESTINATION_PHOTOS[t.code] && <img src={DESTINATION_PHOTOS[t.code]} alt="" loading="lazy" onError={(event) => { event.currentTarget.hidden = true; }} />}
-            <span className="dest-code" aria-hidden="true">
-              {t.code}
-            </span>
-            <svg className="dest-arc" viewBox="0 0 200 80" aria-hidden="true">
-              <path d="M6 70 Q100 -20 194 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 5" strokeLinecap="round" />
-              <circle cx="6" cy="70" r="3" fill="currentColor" />
-              <circle cx="194" cy="40" r="4" fill="currentColor" />
-            </svg>
-            <span className="dest-text">
-              <strong>{t.city}</strong>
-              <small>
-                {fmtShort(t.out)} – {fmtShort(t.back)} · {t.line}
-              </small>
-              <b>
-                from {format(t.fromGBP)} <i>return</i>
-              </b>
-            </span>
-            <span className="dest-go" aria-hidden="true">
-              <ArrowUpRightIcon size={16} />
-            </span>
-          </Link>
-        ))}
-      </div>
-      <small className="dest-note">Sample return fares for one adult.</small>
     </section>
   );
 }

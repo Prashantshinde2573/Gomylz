@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { CURRENCIES, type CurrencyCode, useCurrency } from "./CurrencyProvider";
+import { createChat } from "@/lib/startChat";
 import { LOGO } from "@/lib/assets";
 import { CloseIcon, FlyIcon, GlobeIcon, PlusIcon } from "./Icons";
 
 const HOME_LINKS = [
   ["Stays", "/#stays"],
-  ["See it work", "/#demo"],
-  ["How it works", "/#how"],
+  ["How it works", "/#demo"],
+  ["Why Mylz?", "/#how"],
   ["Trending", "/#trending"],
   ["Booking", "/#fee"],
   ["FAQ", "/#faq"],
@@ -18,25 +19,37 @@ const HOME_LINKS = [
 
 export function Nav() {
   const { currency, setCurrency } = useCurrency();
-  const inChat = usePathname().startsWith("/chat");
+  const pathname = usePathname();
+  const router = useRouter();
+  const inChat = pathname === "/chat" || pathname.startsWith("/chat/");
+  const chatLinks = [["Home", "/"], ["Destinations", "/#trending"], ["Booking help", "/#faq"]];
   const authDialog = useRef<HTMLDialogElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 24);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
 
   return (
-    <header className={`nav${inChat ? " is-solid" : ""}`}>
+    <header className={`nav${inChat ? " nav-chat" : ""}${inChat || scrolled ? " is-solid" : " is-over-hero"}`}>
       <Link className="logo" href="/" aria-label="mylz home">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} />
       </Link>
 
       <nav className="nav-links" aria-label="Main">
-        {HOME_LINKS.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+        {(inChat ? chatLinks : HOME_LINKS).map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+        {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
       </nav>
 
       <div className="nav-actions">
         {inChat && (
-          <Link className="new-chat" href="/chat?new=1">
-            <PlusIcon size={16} /> <span>Start new chat</span>
-          </Link>
+          <button type="button" className="new-chat" aria-label="Start new chat" onClick={() => router.push(createChat(""))}>
+            <PlusIcon size={16} /> <span>Start New Chat</span>
+          </button>
         )}
         <label className="currency">
           <GlobeIcon />
@@ -65,18 +78,17 @@ export function Nav() {
             <FlyIcon size={16} />
           </Link>
         )}
-        {!inChat && (
-          <details className="nav-menu">
-            <summary aria-label="Open menu"><span aria-hidden="true">☰</span></summary>
-            <nav aria-label="Homepage sections">
-              {[...HOME_LINKS, ["Plan my trip", "/#start"]].map(([label, href]) => (
-                <Link key={href} href={href} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>
-                  {label}
-                </Link>
-              ))}
-            </nav>
-          </details>
-        )}
+        <details className="nav-menu">
+          <summary aria-label="Open menu"><span aria-hidden="true">☰</span></summary>
+          <nav aria-label="Homepage sections">
+            {(inChat ? chatLinks : [...HOME_LINKS, ["Plan my trip", "/#start"]]).map(([label, href]) => (
+              <Link key={href} href={href} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>
+                {label}
+              </Link>
+            ))}
+            {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
+          </nav>
+        </details>
       </div>
     </header>
   );
