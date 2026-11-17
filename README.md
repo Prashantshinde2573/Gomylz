@@ -54,5 +54,5 @@ The site makes no cookie or tracking claim: the audit found the live claim does 
 ## Assets
 
 - `public/videos/hero.mp4` and `hero-poster.jpg`: the hero clip.
-- Logo and backer logos load from `https://gomylz.com/images/` (`lib/assets.ts`). To self-host, save them in `public/images/` and change `BASE`.
+- The Mylz wordmark lives in `public/images/`. Official backer logos load from `https://gomylz.com/images/` (`lib/assets.ts`).
 - Destination photos are optional: `DESTINATION_PHOTOS` in `lib/assets.ts`.

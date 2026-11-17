@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
 import { PromptForm } from "@/components/PromptForm";
-import { Referral } from "@/components/Referral";
 import { LOGO } from "@/lib/assets";
 import "./globals.css";
 
@@ -31,7 +30,7 @@ const organizationSchema = {
   name: "mylz",
   legalName: "Milesfactory Limited",
   url: SITE,
-  logo: LOGO.src,
+  logo: new URL(LOGO.src, SITE).href,
   description: DESCRIPTION,
 };
 
@@ -61,7 +60,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="footer-actions">
                   <p>Start with a destination, a date, or an idea.</p>
                   <PromptForm variant="cta" />
-                  <Referral />
                 </div>
               </section>
               <nav aria-label="Explore Mylz">

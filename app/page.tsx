@@ -4,7 +4,7 @@ import { HeroMedia } from "@/components/HeroMedia";
 import { Nav } from "@/components/Nav";
 import {
   ArrowUpRightIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon,
-  GlobeIcon, MicIcon, PlaneIcon, SparkleIcon, TicketIcon,
+  GlobeIcon, MicIcon, PlaneIcon, PlayIcon, PlusIcon, SparkleIcon, StarIcon, StopIcon, TicketIcon,
 } from "@/components/Icons";
 import { SectionMotion } from "@/components/SectionMotion";
 import { SearchPanel } from "@/components/SearchPanel";
@@ -169,14 +169,14 @@ export default function HomePage() {
               <details className="review-media">
                 <summary aria-label={`Toggle testimonial preview for ${name}`}>
                   <img src={`https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1200&h=700&q=82`} alt="" loading="lazy" />
-                  <span className="review-play" aria-hidden="true"><span className="review-play-icon" /></span>
+                  <span className="review-play" aria-hidden="true"><PlayIcon /><StopIcon /></span>
                 </summary>
                 <p className="review-preview">Sample testimonial · Video unavailable</p>
               </details>
               <blockquote>“{quote}”</blockquote>
               <figcaption>
                 <span><strong>{name}</strong><small>{role}</small></span>
-                <span className="review-score" aria-label={`${rating} out of 5 stars`}><span aria-hidden="true">★</span> {rating}/5</span>
+                <span className="review-score" aria-label={`${rating} out of 5 stars`}><StarIcon size={16} /> {rating}/5</span>
               </figcaption>
             </figure>
           ))}
@@ -188,7 +188,7 @@ export default function HomePage() {
         <div className="faq-list">
           {FAQS.map((item) => (
             <details key={item.q}>
-              <summary>{item.q}</summary><p>{item.a} {item.href && <a href={item.href}>{item.linkLabel} <span aria-hidden="true">↗</span></a>}</p>
+              <summary>{item.q}<PlusIcon size={18} /></summary><p>{item.a} {item.href && <a href={item.href}>{item.linkLabel} <ArrowUpRightIcon size={14} /></a>}</p>
             </details>
           ))}
         </div>

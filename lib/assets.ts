@@ -1,8 +1,7 @@
-// Brand images, loaded from the live mylz site.
-// To self-host: save the files into /public/images and set BASE to "/images".
+// Official partner marks are loaded from the live Mylz site.
 const BASE = "https://gomylz.com/images";
 
-export const LOGO = { src: `${BASE}/mylz-logo-cyan.png`, width: 268, height: 107 };
+export const LOGO = { src: "/images/mylz-wordmark.svg", width: 103, height: 36 };
 
 /** First frame of the hero video: shown while it loads and to visitors who prefer less motion. */
 export const HERO_POSTER = "/videos/gomylz-hero-poster.jpg";

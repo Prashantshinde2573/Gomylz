@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCurrency } from "@/components/CurrencyProvider";
-import { ArrowRightIcon, BagIcon, BedIcon, CalendarIcon, GridIcon, PlaneIcon, SparkleIcon, CalendarXIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
+import { ArrowRightIcon, BagIcon, BedIcon, CalendarIcon, GridIcon, PlaneIcon, SparkleIcon, CalendarXIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
 import { useSpeech } from "@/components/useSpeech";
 import { DESTINATION_PHOTOS, HERO_POSTER } from "@/lib/assets";
 import { cityForPlace } from "@/lib/airports";
@@ -471,7 +471,7 @@ export function ChatClient({ id }: { id: string }) {
                     <div className="flight-foot">
                       <strong className="price">{format(f.priceGBP)}</strong>
                       <button type="button" className="link-btn" onClick={() => setDetails(f)}>
-                        See details ›
+                        See details <ChevronRightIcon />
                       </button>
                       <button type="button" className="btn-dark sm" onClick={() => selectFlight(f)}>
                         {picked.flight?.id === f.id ? "Selected" : "Select"}
@@ -534,7 +534,7 @@ export function ChatClient({ id }: { id: string }) {
         <div className="sheet-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setDetails(null)}>
           <div className="sheet details" role="dialog" aria-modal="true" aria-label="Flight details">
             <button type="button" className="link-btn" onClick={() => setDetails(null)}>
-              ‹ Back to results
+              <ChevronLeftIcon /> Back to results
             </button>
             <h2>Flight details</h2>
             <p className="details-sub">

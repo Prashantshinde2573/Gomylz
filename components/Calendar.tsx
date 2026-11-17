@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "./Icons";
 import { MONTH_NAMES, fromISO, toISO } from "@/lib/dates";
 
 export type DateRange = { start: string | null; end: string | null };
@@ -46,13 +47,13 @@ export function Calendar({ mode, value, onChange, minISO }: Props) {
     <div className="cal">
       <div className="cal-head">
         <button type="button" className="cal-nav" aria-label="Previous month" disabled={!canGoBack} onClick={() => shift(-1)}>
-          ‹
+          <ChevronLeftIcon />
         </button>
         <strong aria-live="polite">
           {MONTH_NAMES[view.month]} {view.year}
         </strong>
         <button type="button" className="cal-nav" aria-label="Next month" onClick={() => shift(1)}>
-          ›
+          <ChevronRightIcon />
         </button>
       </div>
       <div className="cal-grid" role="grid">

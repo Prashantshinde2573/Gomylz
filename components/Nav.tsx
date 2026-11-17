@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CURRENCIES, type CurrencyCode, useCurrency } from "./CurrencyProvider";
+import { CurrencyPicker } from "./CurrencyPicker";
 import { createChat } from "@/lib/startChat";
 import { LOGO } from "@/lib/assets";
-import { CloseIcon, FlyIcon, GlobeIcon, PlusIcon } from "./Icons";
+import { AccountIcon, CloseIcon, FlyIcon, MenuIcon, PlusIcon } from "./Icons";
 
 const HOME_LINKS = [
   ["Stays", "/#stays"],
@@ -18,12 +18,13 @@ const HOME_LINKS = [
 ];
 
 export function Nav() {
-  const { currency, setCurrency } = useCurrency();
   const pathname = usePathname();
   const router = useRouter();
   const inChat = pathname === "/chat" || pathname.startsWith("/chat/");
   const chatLinks = [["Home", "/"], ["Destinations", "/#trending"], ["Booking help", "/#faq"]];
+  const menuLinks = inChat ? chatLinks : [...HOME_LINKS, ["Plan my trip", "/#start"]];
   const authDialog = useRef<HTMLDialogElement>(null);
+  const mobileMenu = useRef<HTMLDialogElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,8 +34,28 @@ export function Nav() {
     return () => window.removeEventListener("scroll", update);
   }, []);
 
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 640px)");
+    const closeOnDesktop = () => {
+      if (!mobile.matches) mobileMenu.current?.close();
+    };
+    mobile.addEventListener("change", closeOnDesktop);
+    return () => mobile.removeEventListener("change", closeOnDesktop);
+  }, []);
+
   return (
     <header className={`nav${inChat ? " nav-chat" : ""}${inChat || scrolled ? " is-solid" : " is-over-hero"}`}>
+      <details className="nav-menu">
+        <summary aria-label="Navigation menu"><MenuIcon size={19} /></summary>
+        <nav aria-label="Main menu">
+          {menuLinks.map(([label, href]) => (
+            <Link key={href} href={href} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>
+              {label}
+            </Link>
+          ))}
+          {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
+        </nav>
+      </details>
       <Link className="logo" href="/" aria-label="mylz home">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} />
@@ -51,19 +72,9 @@ export function Nav() {
             <PlusIcon size={16} /> <span>Start New Chat</span>
           </button>
         )}
-        <label className="currency">
-          <GlobeIcon />
-          <span className="sr-only">Currency</span>
-          <select value={currency} onChange={(e) => setCurrency(e.target.value as CurrencyCode)}>
-            {Object.keys(CURRENCIES).map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="button" className="nav-link signin" onClick={() => authDialog.current?.showModal()}>
-          Sign in
+        <CurrencyPicker />
+        <button type="button" className="nav-link signin" aria-label="Sign in" onClick={() => authDialog.current?.showModal()}>
+          <span>Sign in</span><AccountIcon />
         </button>
         <dialog ref={authDialog} className="sheet login nav-auth" aria-labelledby="nav-auth-title">
           <button type="button" className="sheet-close" aria-label="Close" onClick={() => authDialog.current?.close()}><CloseIcon size={18} /></button>
@@ -78,18 +89,32 @@ export function Nav() {
             <FlyIcon size={16} />
           </Link>
         )}
-        <details className="nav-menu">
-          <summary aria-label="Open menu"><span aria-hidden="true">☰</span></summary>
-          <nav aria-label="Homepage sections">
-            {(inChat ? chatLinks : [...HOME_LINKS, ["Plan my trip", "/#start"]]).map(([label, href]) => (
-              <Link key={href} href={href} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>
-                {label}
-              </Link>
-            ))}
-            {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
-          </nav>
-        </details>
       </div>
+      <button type="button" className="mobile-menu-trigger" aria-label="Open navigation menu" aria-haspopup="dialog" onClick={() => mobileMenu.current?.showModal()}>
+        <MenuIcon size={19} />
+      </button>
+      <dialog ref={mobileMenu} className="mobile-menu-dialog" aria-label="Navigation menu">
+        <div className="mobile-menu-heading">
+          <Link className="logo" href="/" aria-label="Mylz home" onClick={() => mobileMenu.current?.close()}>
+            <img src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} />
+          </Link>
+          <button type="button" className="mobile-menu-close" aria-label="Close navigation menu" onClick={() => mobileMenu.current?.close()}>
+            <CloseIcon size={20} />
+          </button>
+        </div>
+        <nav aria-label="Mobile navigation">
+          {menuLinks.map(([label, href]) => (
+            <Link key={href} href={href} onClick={() => mobileMenu.current?.close()}>{label}</Link>
+          ))}
+          {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
+        </nav>
+        <button type="button" className="mobile-menu-signin" onClick={() => {
+          mobileMenu.current?.close();
+          authDialog.current?.showModal();
+        }}>
+          <AccountIcon /> Sign in
+        </button>
+      </dialog>
     </header>
   );
 }

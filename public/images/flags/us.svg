@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.7 13">
+<defs><polygon id="star" points="0.000,-1.000 0.225,-0.309 0.951,-0.309 0.363,0.118 0.588,0.809 0.000,0.382 -0.588,0.809 -0.363,0.118 -0.951,-0.309 -0.225,-0.309" fill="#fff" transform="scale(.4)"/></defs>
+<path fill="#b31942" d="M0 0h24.7v13H0z"/>
+<g stroke="#fff"><path d="M0 1.5h24.7"/>
+<path d="M0 3.5h24.7"/>
+<path d="M0 5.5h24.7"/>
+<path d="M0 7.5h24.7"/>
+<path d="M0 9.5h24.7"/>
+<path d="M0 11.5h24.7"/></g>
+<path fill="#0a3161" d="M0 0h9.88v7H0z"/>
+<use href="#star" x="0.823" y="0.700"/>
+<use href="#star" x="2.469" y="0.700"/>
+<use href="#star" x="4.115" y="0.700"/>
+<use href="#star" x="5.761" y="0.700"/>
+<use href="#star" x="7.407" y="0.700"/>
+<use href="#star" x="9.053" y="0.700"/>
+<use href="#star" x="1.646" y="1.400"/>
+<use href="#star" x="3.292" y="1.400"/>
+<use href="#star" x="4.938" y="1.400"/>
+<use href="#star" x="6.584" y="1.400"/>
+<use href="#star" x="8.230" y="1.400"/>
+<use href="#star" x="0.823" y="2.100"/>
+<use href="#star" x="2.469" y="2.100"/>
+<use href="#star" x="4.115" y="2.100"/>
+<use href="#star" x="5.761" y="2.100"/>
+<use href="#star" x="7.407" y="2.100"/>
+<use href="#star" x="9.053" y="2.100"/>
+<use href="#star" x="1.646" y="2.800"/>
+<use href="#star" x="3.292" y="2.800"/>
+<use href="#star" x="4.938" y="2.800"/>
+<use href="#star" x="6.584" y="2.800"/>
+<use href="#star" x="8.230" y="2.800"/>
+<use href="#star" x="0.823" y="3.500"/>
+<use href="#star" x="2.469" y="3.500"/>
+<use href="#star" x="4.115" y="3.500"/>
+<use href="#star" x="5.761" y="3.500"/>
+<use href="#star" x="7.407" y="3.500"/>
+<use href="#star" x="9.053" y="3.500"/>
+<use href="#star" x="1.646" y="4.200"/>
+<use href="#star" x="3.292" y="4.200"/>
+<use href="#star" x="4.938" y="4.200"/>
+<use href="#star" x="6.584" y="4.200"/>
+<use href="#star" x="8.230" y="4.200"/>
+<use href="#star" x="0.823" y="4.900"/>
+<use href="#star" x="2.469" y="4.900"/>
+<use href="#star" x="4.115" y="4.900"/>
+<use href="#star" x="5.761" y="4.900"/>
+<use href="#star" x="7.407" y="4.900"/>
+<use href="#star" x="9.053" y="4.900"/>
+<use href="#star" x="1.646" y="5.600"/>
+<use href="#star" x="3.292" y="5.600"/>
+<use href="#star" x="4.938" y="5.600"/>
+<use href="#star" x="6.584" y="5.600"/>
+<use href="#star" x="8.230" y="5.600"/>
+<use href="#star" x="0.823" y="6.300"/>
+<use href="#star" x="2.469" y="6.300"/>
+<use href="#star" x="4.115" y="6.300"/>
+<use href="#star" x="5.761" y="6.300"/>
+<use href="#star" x="7.407" y="6.300"/>
+<use href="#star" x="9.053" y="6.300"/>
+</svg>

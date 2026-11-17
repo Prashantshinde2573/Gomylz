@@ -8,7 +8,7 @@ import { buildSentence, CABINS, type Cabin, type TripQuery } from "@/lib/demo";
 import { createChat } from "@/lib/startChat";
 import { Calendar, type DateRange } from "./Calendar";
 import { useCurrency } from "./CurrencyProvider";
-import { BedIcon, CalendarIcon, FlyIcon, LandingIcon, PlaneIcon, SwapIcon, TakeoffIcon, UserIcon } from "./Icons";
+import { BedIcon, CalendarIcon, FlyIcon, LandingIcon, MinusIcon, PlaneIcon, PlusIcon, SwapIcon, TakeoffIcon, UserIcon } from "./Icons";
 import { PREFILL_EVENT, PromptForm } from "./PromptForm";
 
 type Mode = "ai" | "flights" | "stays";
@@ -374,11 +374,11 @@ function Stepper(props: { label: string; hint: string; noun: string; value: numb
       </span>
       <div>
         <button type="button" aria-label={`Remove one ${noun}`} disabled={value <= min} onClick={() => onChange(value - 1)}>
-          −
+          <MinusIcon />
         </button>
         <output aria-live="polite">{value}</output>
         <button type="button" aria-label={`Add one ${noun}`} disabled={value >= max} onClick={() => onChange(value + 1)}>
-          +
+          <PlusIcon size={16} />
         </button>
       </div>
     </div>

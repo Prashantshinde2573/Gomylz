@@ -4,10 +4,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 // Demo exchange rates against GBP. Replace with live rates from your backend.
 export const CURRENCIES = {
-  GBP: { rate: 1, locale: "en-GB", home: "LON" },
-  EUR: { rate: 1.17, locale: "en-IE", home: "PAR" },
-  USD: { rate: 1.27, locale: "en-US", home: "NYC" },
-  INR: { rate: 107, locale: "en-IN", home: "BOM" },
+  GBP: { rate: 1, locale: "en-GB", home: "LON", name: "British Pound Sterling", flag: "gb" },
+  EUR: { rate: 1.17, locale: "en-IE", home: "PAR", name: "Euro", flag: "eu" },
+  USD: { rate: 1.27, locale: "en-US", home: "NYC", name: "United States Dollar", flag: "us" },
+  INR: { rate: 107, locale: "en-IN", home: "BOM", name: "Indian Rupee", flag: "in" },
 } as const;
 
 export type CurrencyCode = keyof typeof CURRENCIES;
