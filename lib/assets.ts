@@ -5,9 +5,9 @@ const BASE = "https://gomylz.com/images";
 export const LOGO = { src: `${BASE}/mylz-logo-cyan.png`, width: 268, height: 107 };
 
 /** First frame of the hero video: shown while it loads and to visitors who prefer less motion. */
-export const HERO_POSTER = "/videos/hero-poster.jpg";
+export const HERO_POSTER = "/videos/gomylz-hero-poster.jpg";
 
-/** Hero background clip (1080p, muted, 16s loop). */
+/** Hero background clip (720p, played muted on a loop). */
 export const HERO_VIDEO = "/videos/hero.mp4";
 
 export const BACKERS = [

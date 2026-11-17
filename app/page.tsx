@@ -61,7 +61,7 @@ export default function HomePage() {
           <div className="hero-grid">
             <div className="hero-head">
               <span className="hero-pill">Talk. Book. Go.</span>
-              <h1><span>Plan your next trip</span><span>in one <em>conversation.</em></span></h1>
+              <h1>Let's Plan and Go</h1>
               <p className="hero-sub">Tell mylz where you want to go. Search flights and stays by typing, speaking, or using the search form.</p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function HomePage() {
               href={`/chat?q=${encodeURIComponent(prompt)}`}
               key={title}
               prefetch={false}
-              style={{backgroundImage: `linear-gradient(0deg, #b4d8e5 0%, #a5cad750 26%, transparent 57%), url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}}
+              style={{backgroundImage: `var(--card-photo-gradient), url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}}
             >
               <span>{title}</span><span className="round-arrow"><ArrowUpRightIcon size={17} /></span>
             </Link>
