@@ -8,7 +8,7 @@ import { buildSentence, CABINS, type Cabin, type TripQuery } from "@/lib/demo";
 import { createChat } from "@/lib/startChat";
 import { Calendar, type DateRange } from "./Calendar";
 import { useCurrency } from "./CurrencyProvider";
-import { BedIcon, CalendarIcon, FlyIcon, LandingIcon, MinusIcon, PlaneIcon, PlusIcon, SwapIcon, TakeoffIcon, UserIcon } from "./Icons";
+import { BedIcon, CalendarIcon, FlyIcon, MinusIcon, PlusIcon, SwapIcon, UserIcon } from "./Icons";
 import { PREFILL_EVENT, PromptForm } from "./PromptForm";
 
 type Mode = "ai" | "flights" | "stays";
@@ -116,7 +116,7 @@ export function SearchPanel() {
       <div className="search-card" data-mode={mode}>
       {mode !== "ai" && (
         <div className="sc-modes manual-modes" role="group" aria-label="Search type">
-          <button type="button" aria-pressed={mode === "flights"} onClick={() => switchMode("flights")}><PlaneIcon /> Flights</button>
+          <button type="button" aria-pressed={mode === "flights"} onClick={() => switchMode("flights")}><FlyIcon /> Flights</button>
           <button type="button" aria-pressed={mode === "stays"} onClick={() => switchMode("stays")}><BedIcon /> Stays</button>
         </div>
       )}
@@ -153,7 +153,7 @@ export function SearchPanel() {
           {mode === "flights" ? (
             <div className="sc-route">
               <Field
-                icon={<TakeoffIcon />}
+                icon={<FlyIcon />}
                 label="Departing from"
                 value={origin ? placeName(origin) : null}
                 placeholder="City or airport"
@@ -173,7 +173,7 @@ export function SearchPanel() {
                 <SwapIcon />
               </button>
               <Field
-                icon={<LandingIcon />}
+                icon={<FlyIcon />}
                 label="Arriving at"
                 value={to ? placeName(to) : null}
                 placeholder="Where to?"
@@ -233,7 +233,7 @@ export function SearchPanel() {
 
           {multiCity && (
             <div className="sc-onward">
-              <Field icon={<LandingIcon />} label="Next destination" value={nextCity ? placeName(nextCity) : null}
+              <Field icon={<FlyIcon />} label="Next destination" value={nextCity ? placeName(nextCity) : null}
                 placeholder="City or airport" open={pop === "next-city"} onClick={() => toggle("next-city")}>
                 <PlacePicker placeholder="Next destination" exclude={to?.cityCode}
                   onPick={(p) => { setNextCity(p); setPop("next-date"); }} />
@@ -354,7 +354,7 @@ function PlacePicker(props: { placeholder: string; onPick: (p: PlaceRef) => void
         {results.map((p) => (
           <li key={`${p.kind}-${p.code}`}>
             <button type="button" className={`place ${p.kind}`} onClick={() => onPick(p)}>
-              {p.kind === "city" ? <BedIcon size={16} /> : <PlaneIcon size={16} />}
+              {p.kind === "city" ? <BedIcon size={16} /> : <FlyIcon />}
               {p.label}
             </button>
           </li>

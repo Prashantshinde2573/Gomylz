@@ -5,7 +5,7 @@ import { type PlaceRef, searchPlaces } from "@/lib/airports";
 import { toISO } from "@/lib/dates";
 import { CABINS, type Cabin, type TripQuery } from "@/lib/demo";
 import { Calendar, type DateRange } from "./Calendar";
-import { ArrowLeftIcon, BedIcon, PlaneIcon } from "./Icons";
+import { ArrowLeftIcon, BedIcon, FlyIcon } from "./Icons";
 
 type Step = "from" | "to" | "dates" | "pax";
 
@@ -119,7 +119,7 @@ export function Wizard({ mode, tripType, onClose, onDone }: Props) {
             {results.map((p) => (
               <li key={`${p.kind}-${p.code}`}>
                 <button type="button" className={`place ${p.kind}`} onClick={() => choose(p)}>
-                  {p.kind === "city" ? <BedIcon size={16} /> : <PlaneIcon size={16} />}
+                  {p.kind === "city" ? <BedIcon size={16} /> : <FlyIcon />}
                   {p.label}
                 </button>
               </li>

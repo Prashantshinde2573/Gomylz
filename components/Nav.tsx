@@ -86,7 +86,7 @@ export function Nav() {
         {!inChat && (
           <Link className="nav-cta btn-fly" href="/#start">
             Plan my trip
-            <FlyIcon size={16} />
+            <FlyIcon />
           </Link>
         )}
       </div>

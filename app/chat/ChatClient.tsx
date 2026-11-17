@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCurrency } from "@/components/CurrencyProvider";
-import { ArrowRightIcon, BagIcon, BedIcon, CalendarIcon, GridIcon, PlaneIcon, SparkleIcon, CalendarXIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
+import { ArrowRightIcon, BagIcon, BedIcon, CalendarIcon, GridIcon, SparkleIcon, CalendarXIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
 import { useSpeech } from "@/components/useSpeech";
 import { DESTINATION_PHOTOS, HERO_POSTER } from "@/lib/assets";
 import { cityForPlace } from "@/lib/airports";
@@ -25,10 +25,10 @@ const PAGE = 6;
 const HOLD_SECONDS = 25 * 60;
 
 const TRIP_STARTERS = [
-  { label: "Flights", Icon: PlaneIcon, prompt: "Find flights to " },
-  { label: "Stays", Icon: BedIcon, prompt: "Find a hotel in " },
-  { label: "Flight + stay", Icon: SuitcaseIcon, prompt: "Plan flights and a hotel in " },
-  { label: "Explore", Icon: GridIcon, prompt: "Suggest places for a long weekend" },
+  { label: "Flights", icon: <FlyIcon />, prompt: "Find flights to " },
+  { label: "Stays", icon: <BedIcon size={21} />, prompt: "Find a hotel in " },
+  { label: "Flight + stay", icon: <SuitcaseIcon size={21} />, prompt: "Plan flights and a hotel in " },
+  { label: "Explore", icon: <GridIcon size={21} />, prompt: "Suggest places for a long weekend" },
 ];
 
 const DESTINATION_STARTERS = [
@@ -378,9 +378,9 @@ export function ChatClient({ id }: { id: string }) {
                 <h2>Your trip options</h2>
               </div>
               <div className="chat-starters">
-                {TRIP_STARTERS.map(({ label, Icon, prompt }) => (
+                {TRIP_STARTERS.map(({ label, icon, prompt }) => (
                   <button type="button" key={label} onClick={() => startDraft(prompt)}>
-                    <span className="chat-heading-icon" aria-hidden="true"><Icon size={21} /></span>
+                    <span className="chat-heading-icon" aria-hidden="true">{icon}</span>
                     <strong>{label}</strong>
                   </button>
                 ))}
@@ -394,7 +394,7 @@ export function ChatClient({ id }: { id: string }) {
                         onError={(event) => { event.currentTarget.hidden = true; }} />
                       <span className="destination-idea-copy">
                         <span><strong>{label}</strong><small>{detail}</small></span>
-                        <span className="destination-idea-action">Plan <PlaneIcon size={15} /></span>
+                        <span className="destination-idea-action">Plan <FlyIcon /></span>
                       </span>
                     </button>
                   ))}
@@ -522,7 +522,7 @@ export function ChatClient({ id }: { id: string }) {
               </button>
               <button type="button" className="btn-accent sm btn-fly" onClick={() => setLogin("book")}>
                 Book
-                <FlyIcon size={16} />
+                <FlyIcon />
               </button>
             </div>
           )}
@@ -579,7 +579,7 @@ export function ChatClient({ id }: { id: string }) {
               </button>
               <button type="button" className="btn-accent sm btn-fly" onClick={() => selectFlight(details)}>
                 Select flight
-                <FlyIcon size={16} />
+                <FlyIcon />
               </button>
             </div>
           </div>

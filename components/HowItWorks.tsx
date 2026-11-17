@@ -74,7 +74,7 @@ export function HowItWorks() {
               </ul>
             </div>
             <span className="hw-btn">
-              Plan my trip <FlyIcon size={16} />
+              Plan my trip <FlyIcon />
             </span>
           </div>
         </li>

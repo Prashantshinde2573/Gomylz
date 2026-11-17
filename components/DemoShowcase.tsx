@@ -49,7 +49,7 @@ export function DemoShowcase() {
       <footer className="product-preview-foot">
         <small>Sample options and prices</small>
         <button className="btn-dark sm btn-fly" type="button" onClick={() => window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail: SENTENCE }))}>
-          Try this prompt <FlyIcon size={15} />
+          Try this prompt <FlyIcon />
         </button>
       </footer>
     </div>

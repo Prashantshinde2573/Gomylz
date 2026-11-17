@@ -2,7 +2,7 @@ import {
   ArrowLeft, ArrowRight, ArrowRightLeft, ArrowUpRight, BedDouble, Building2,
   CalendarDays, CalendarX2, Check, ChevronDown, ChevronLeft, ChevronRight, Columns2, Globe,
   Heart, LayoutGrid, Luggage, Menu, MessageCircleMore, Mic, Minus, MountainSnow,
-  Plane, PlaneLanding, PlaneTakeoff, Play, Plus, Search, ShoppingBag, Sparkles,
+  Plane, Play, Plus, Search, ShoppingBag, Sparkles,
   Square, Star, Tag, TicketCheck, Umbrella, UserRound, Users, UsersRound, X,
   type LucideIcon,
 } from "lucide-react";
@@ -18,8 +18,6 @@ function outline(Icon: LucideIcon, defaultSize = 20) {
 export const SparkleIcon = outline(Sparkles);
 export const PlaneIcon = outline(Plane);
 export const BedIcon = outline(BedDouble);
-export const TakeoffIcon = outline(PlaneTakeoff);
-export const LandingIcon = outline(PlaneLanding);
 export const CalendarIcon = outline(CalendarDays);
 export const UserIcon = outline(UsersRound);
 export const AccountIcon = outline(UserRound, 16);
@@ -55,6 +53,10 @@ export const ChevronDownIcon = outline(ChevronDown, 14);
 export const PlayIcon = outline(Play, 18);
 export const StopIcon = outline(Square, 16);
 
-export function FlyIcon({ size = 18 }: IconProps) {
-  return <span className="fly" aria-hidden="true"><PlaneIcon size={size} /></span>;
+export function FlyIcon() {
+  return (
+    <svg className="fly" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 12c0 1-1.2 1.7-2.5 1.7h-4.7L9.6 22H7.2l2.6-8.3H5.6l-2 2.4H1.8L3 12 1.8 7.9h1.8l2 2.4h4.2L7.2 2h2.4l5.2 8.3h4.7c1.3 0 2.5.7 2.5 1.7Z" />
+    </svg>
+  );
 }

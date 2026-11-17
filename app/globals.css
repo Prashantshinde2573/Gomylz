@@ -111,9 +111,7 @@ mark { background: rgba(169, 243, 246, 0.25); color: inherit; padding: 0 6px; bo
 /* The plane on primary buttons does a barrel roll on hover */
 .btn-fly { gap: 10px; }
 .lucide { flex: none; vertical-align: middle; }
-.fly { display: inline-grid; place-items: center; perspective: 120px; }
-.fly svg { display: block; transition: transform .7s cubic-bezier(.45, 0, .2, 1); transform-style: preserve-3d; }
-.btn-fly:hover .fly svg, .btn-fly:focus-visible .fly svg { transform: rotateX(360deg); }
+.fly { flex: none; vertical-align: middle; }
 
 /* Sizes */
 .sm { height: 40px; padding: 0 18px; font-size: 14px; }
@@ -828,7 +826,6 @@ main h2.trust-title { font-size: 18px; font-weight: 500; line-height: 1.3; lette
   .cta-form { padding-left: var(--s-4); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .btn-fly:hover .fly svg { transform: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
