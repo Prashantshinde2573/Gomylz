@@ -27,6 +27,11 @@ function isTripQuery(value: unknown): value is TripQuery {
     && (q.returnDate === undefined
       ? q.tripType === "one-way" && q.kind !== "hotel"
       : isCalendarDate(q.returnDate) && q.returnDate > q.date)
+    && (q.onward === undefined || (
+      q.kind === "flight" && q.tripType === "one-way" && q.returnDate === undefined
+      && q.onward && isPlace(q.onward.to) && q.onward.to.cityCode !== q.to.cityCode
+      && isCalendarDate(q.onward.date) && q.onward.date > q.date
+    ))
     && Number.isInteger(q.adults) && q.adults >= 1 && q.adults <= 9
     && Number.isInteger(q.children) && q.children >= 0 && q.children <= 8
     && CABINS.includes(q.cabin);

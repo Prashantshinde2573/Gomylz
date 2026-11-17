@@ -3,16 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { type PlaceRef, cityForPlace, cityRef, searchPlaces } from "@/lib/airports";
-import { fmtShort, toISO } from "@/lib/dates";
+import { addDays, fmtShort, toISO } from "@/lib/dates";
 import { buildSentence, CABINS, type Cabin, type TripQuery } from "@/lib/demo";
 import { createChat } from "@/lib/startChat";
 import { Calendar, type DateRange } from "./Calendar";
 import { useCurrency } from "./CurrencyProvider";
-import { BedIcon, CalendarIcon, FlyIcon, LandingIcon, PlaneIcon, SparkleIcon, SwapIcon, TakeoffIcon, UserIcon } from "./Icons";
-import { PREFILL_EVENT, PromptForm, TripTypes } from "./PromptForm";
+import { BedIcon, CalendarIcon, FlyIcon, LandingIcon, PlaneIcon, SwapIcon, TakeoffIcon, UserIcon } from "./Icons";
+import { PREFILL_EVENT, PromptForm } from "./PromptForm";
 
 type Mode = "ai" | "flights" | "stays";
-type Pop = "from" | "to" | "dates" | "pax" | null;
+type Pop = "from" | "to" | "dates" | "checkout" | "next-city" | "next-date" | "pax" | null;
 
 /** The hero search card: ask mylzAI in one sentence, or search flights or stays field by field. */
 export function SearchPanel() {
@@ -22,7 +22,12 @@ export function SearchPanel() {
   const today = useMemo(() => toISO(new Date()), []);
 
   const [mode, setMode] = useState<Mode>("ai");
-  const [tripType, setTripType] = useState<"return" | "one-way">("return");
+  const [manualMode, setManualMode] = useState<"flights" | "stays">("flights");
+  const [tripType, setTripType] = useState<"return" | "one-way" | "multi-city">("return");
+  const [hotelCity, setHotelCity] = useState<PlaceRef | null>(null);
+  const [hotelDates, setHotelDates] = useState<DateRange>({ start: null, end: null });
+  const [nextCity, setNextCity] = useState<PlaceRef | null>(null);
+  const [nextDate, setNextDate] = useState<string | null>(null);
   const [cabin, setCabin] = useState<Cabin>("Economy");
   const [from, setFrom] = useState<PlaceRef | null>(null);
   const [to, setTo] = useState<PlaceRef | null>(null);
@@ -34,12 +39,13 @@ export function SearchPanel() {
   // Departure defaults to the visitor's home city, inferred from their currency.
   const homeCity = cityForPlace(home);
   const origin = from ?? (homeCity ? cityRef(homeCity) : null);
-  const needsRange = mode === "stays" || tripType === "return";
+  const multiCity = mode === "flights" && tripType === "multi-city";
+  const needsRange = tripType === "return";
   const datesReady = !!dates.start && (!needsRange || !!dates.end);
 
   // "Try this prompt" elsewhere on the page switches back to the sentence box.
   useEffect(() => {
-    const onPrefill = () => setMode("ai");
+    const onPrefill = () => { setMode("ai"); setPop(null); };
     window.addEventListener(PREFILL_EVENT, onPrefill);
     return () => window.removeEventListener(PREFILL_EVENT, onPrefill);
   }, []);
@@ -62,8 +68,7 @@ export function SearchPanel() {
   function switchMode(next: Mode) {
     setMode(next);
     setPop(null);
-    // A one-way trip has one date; a stay always has two.
-    if (next === "stays" && dates.start && !dates.end) setDates({ start: dates.start, end: null });
+    if (next !== "ai") setManualMode(next);
   }
 
   function swap() {
@@ -73,16 +78,22 @@ export function SearchPanel() {
   }
 
   function search() {
+    const destination = mode === "stays" ? hotelCity : to;
+    const tripDates = mode === "stays" ? hotelDates : dates;
     if (mode === "flights" && !origin) return setPop("from");
-    if (!to) return setPop("to");
-    if (!datesReady) return setPop("dates");
+    if (!destination || (mode === "flights" && destination.cityCode === origin?.cityCode)) return setPop("to");
+    if (!tripDates.start || (mode === "flights" && !datesReady)) return setPop("dates");
+    if (mode === "stays" && !tripDates.end) return setPop("checkout");
+    if (multiCity && (!nextCity || nextCity.cityCode === destination.cityCode)) return setPop("next-city");
+    if (multiCity && (!nextDate || nextDate <= tripDates.start)) return setPop("next-date");
     const query: TripQuery = {
       kind: mode === "stays" ? "hotel" : "flight",
-      tripType: mode === "flights" ? tripType : "one-way",
+      tripType: mode === "flights" && needsRange ? "return" : "one-way",
       from: mode === "flights" ? origin ?? undefined : undefined,
-      to,
-      date: dates.start!,
-      returnDate: needsRange ? dates.end ?? undefined : undefined,
+      to: destination,
+      date: tripDates.start,
+      returnDate: mode === "stays" || needsRange ? tripDates.end ?? undefined : undefined,
+      onward: multiCity && nextCity && nextDate ? { to: nextCity, date: nextDate } : undefined,
       adults,
       children,
       cabin,
@@ -98,27 +109,26 @@ export function SearchPanel() {
 
   return (
     <div className="search-wrap" ref={searchRef}>
-      <div className="sc-modes" role="tablist" aria-label="How to search">
-        <button type="button" role="tab" aria-selected={mode === "ai"} onClick={() => switchMode("ai")}>
-          <SparkleIcon /> <strong>Ask mylzAI</strong>
-        </button>
-        <button type="button" role="tab" aria-selected={mode === "flights"} onClick={() => switchMode("flights")}>
-          <PlaneIcon /> Flights
-        </button>
-        <button type="button" role="tab" aria-selected={mode === "stays"} onClick={() => switchMode("stays")}>
-          <BedIcon /> Stays
-        </button>
-      </div>
-      <div className="search-card">
+      <button type="button" className="booking-switch" role="switch" aria-checked={mode === "ai"}
+        onClick={() => switchMode(mode === "ai" ? manualMode : "ai")}>
+        <span className="booking-switch-track" aria-hidden="true" /> Book with MylzAI
+      </button>
+      <div className="search-card" data-mode={mode}>
+      {mode !== "ai" && (
+        <div className="sc-modes manual-modes" role="group" aria-label="Search type">
+          <button type="button" aria-pressed={mode === "flights"} onClick={() => switchMode("flights")}><PlaneIcon /> Flights</button>
+          <button type="button" aria-pressed={mode === "stays"} onClick={() => switchMode("stays")}><BedIcon /> Stays</button>
+        </div>
+      )}
       <div className="sc-top">
         {mode === "flights" && (
           <div className="sc-opts">
             <fieldset className="sc-trip">
               <legend className="sr-only">Trip type</legend>
-              {(["return", "one-way"] as const).map((t) => (
+              {(["one-way", "return", "multi-city"] as const).map((t) => (
                 <label key={t}>
                   <input type="radio" name="trip-type" checked={tripType === t} onChange={() => setTripType(t)} />
-                  <span>{t === "return" ? "Return" : "One way"}</span>
+                  <span>{t === "return" ? "Round trip" : t === "multi-city" ? "Multi-city" : "One way"}</span>
                 </label>
               ))}
             </fieldset>
@@ -144,7 +154,7 @@ export function SearchPanel() {
             <div className="sc-route">
               <Field
                 icon={<TakeoffIcon />}
-                label="Departure city"
+                label="Departing from"
                 value={origin ? placeName(origin) : null}
                 placeholder="City or airport"
                 open={pop === "from"}
@@ -164,7 +174,7 @@ export function SearchPanel() {
               </button>
               <Field
                 icon={<LandingIcon />}
-                label="Arrival city"
+                label="Arriving at"
                 value={to ? placeName(to) : null}
                 placeholder="Where to?"
                 open={pop === "to"}
@@ -185,39 +195,56 @@ export function SearchPanel() {
               wide
               icon={<BedIcon size={20} />}
               label="Destination"
-              value={to ? placeName(to) : null}
+              value={hotelCity ? placeName(hotelCity) : null}
               placeholder="Which city?"
               open={pop === "to"}
               onClick={() => toggle("to")}
             >
-              <PlacePicker
-                placeholder="City"
-                citiesOnly
-                onPick={(p) => {
-                  setTo(p);
-                  setPop(datesReady ? null : "dates");
-                }}
-              />
+              <PlacePicker placeholder="City" citiesOnly onPick={(p) => { setHotelCity(p); setPop("dates"); }} />
             </Field>
           )}
 
-          <Field
-            icon={<CalendarIcon />}
-            label={mode === "stays" ? "Check-in – Check-out" : tripType === "return" ? "Departure – Return" : "Departure"}
-            value={dateText}
-            placeholder="Add dates"
-            open={pop === "dates"}
-            onClick={() => toggle("dates")}
-            popClass="is-dates"
-          >
-            <Calendar mode={needsRange ? "range" : "single"} value={dates} onChange={setDates} minISO={today} />
-            <div className="pop-foot">
-              <small>{needsRange ? (mode === "stays" ? "Pick check-in, then check-out." : "Pick departure, then return.") : "Pick your departure date."}</small>
-              <button type="button" className="btn-dark sm" disabled={!datesReady} onClick={() => setPop("pax")}>
-                Done
-              </button>
+          {mode === "stays" ? (
+            <>
+              <Field icon={<CalendarIcon />} label="Check-in" value={hotelDates.start ? fmtShort(hotelDates.start) : null}
+                placeholder="Add date" open={pop === "dates"} onClick={() => toggle("dates")} popClass="is-dates">
+                <Calendar mode="single" value={{start: hotelDates.start, end: null}} minISO={today}
+                  onChange={({ start }) => {
+                    setHotelDates({ start, end: start && hotelDates.end && hotelDates.end > start ? hotelDates.end : null });
+                    setPop("checkout");
+                  }} />
+              </Field>
+              <Field icon={<CalendarIcon />} label="Check-out" value={hotelDates.end ? fmtShort(hotelDates.end) : null}
+                placeholder="Add date" open={pop === "checkout"} onClick={() => hotelDates.start ? toggle("checkout") : setPop("dates")} popClass="is-dates is-end">
+                <Calendar mode="single" value={{start: hotelDates.end, end: null}} minISO={addDays(hotelDates.start ?? today, 1)}
+                  onChange={({ start }) => { setHotelDates({ start: hotelDates.start, end: start }); setPop(null); }} />
+              </Field>
+            </>
+          ) : (
+            <Field icon={<CalendarIcon />} label="Travel dates" value={dateText}
+              placeholder="Add dates" open={pop === "dates"} onClick={() => toggle("dates")} popClass="is-dates">
+              <Calendar key={tripType} mode={needsRange ? "range" : "single"} value={dates} onChange={setDates} minISO={today} />
+              <div className="pop-foot">
+                <small>{needsRange ? "Pick departure, then return." : "Pick your departure date."}</small>
+                <button type="button" className="btn-dark sm" disabled={!datesReady} onClick={() => setPop(multiCity ? "next-city" : "pax")}>Done</button>
+              </div>
+            </Field>
+          )}
+
+          {multiCity && (
+            <div className="sc-onward">
+              <Field icon={<LandingIcon />} label="Next destination" value={nextCity ? placeName(nextCity) : null}
+                placeholder="City or airport" open={pop === "next-city"} onClick={() => toggle("next-city")}>
+                <PlacePicker placeholder="Next destination" exclude={to?.cityCode}
+                  onPick={(p) => { setNextCity(p); setPop("next-date"); }} />
+              </Field>
+              <Field icon={<CalendarIcon />} label="Next departure" value={nextDate && nextDate > (dates.start ?? today) ? fmtShort(nextDate) : null}
+                placeholder="Add date" open={pop === "next-date"} onClick={() => toggle("next-date")} popClass="is-dates">
+                <Calendar mode="single" value={{start: nextDate, end: null}} minISO={addDays(dates.start ?? today, 1)}
+                  onChange={({ start }) => { setNextDate(start); setPop(null); }} />
+              </Field>
             </div>
-          </Field>
+          )}
 
           <Field
             icon={<UserIcon />}
@@ -239,13 +266,12 @@ export function SearchPanel() {
           </Field>
 
           <button type="button" className="search-btn btn-fly" onClick={search}>
-            Search
+            {mode === "flights" ? "Search Flights" : "Search Stays"}
             <FlyIcon />
           </button>
         </div>
       )}
     </div>
-    <TripTypes />
     </div>
   );
 }

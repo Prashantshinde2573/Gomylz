@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { createChat } from "@/lib/startChat";
 import { useCurrency } from "./CurrencyProvider";
-import { ArrowRightIcon, BeachIcon, CityIcon, FamilyIcon, FlyIcon, HeartIcon, MicIcon, SkiIcon, TagIcon } from "./Icons";
+import { ArrowRightIcon, BeachIcon, CityIcon, FamilyIcon, HeartIcon, MicIcon, SkiIcon, TagIcon } from "./Icons";
 import { useSpeech } from "./useSpeech";
 
 const HINTS = [
@@ -38,10 +38,10 @@ export function PromptForm({ variant }: Props) {
   const speech = useSpeech(setValue);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (variant !== "cta" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => setHint((h) => (h + 1) % HINTS.length), 2600);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [variant]);
 
   // "Try this prompt" buttons elsewhere on the page fill the hero box.
   useEffect(() => {
@@ -101,13 +101,12 @@ export function PromptForm({ variant }: Props) {
             </span>
           )}
           <span className="sc-text">
-            <label htmlFor={inputId}>Your trip, in one sentence</label>
-            <input ref={inputRef} id={inputId} type="text" autoComplete="off" value={value} onChange={(e) => setValue(e.target.value)} placeholder={HINTS[hint]} />
+            <label className="sr-only" htmlFor={inputId}>Your trip, in one sentence</label>
+            <input ref={inputRef} id={inputId} type="text" autoComplete="off" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Tell Mylz your trip in one sentence" />
           </span>
         </div>
-        <button className="search-btn btn-fly" type="submit">
-          Search
-          <FlyIcon />
+        <button className="search-btn" type="submit" aria-label="Search with MylzAI">
+          <ArrowRightIcon size={18} />
         </button>
       </form>
 

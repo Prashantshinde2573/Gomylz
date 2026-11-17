@@ -15,6 +15,7 @@ export type TripQuery = {
   to: PlaceRef;
   date: string;
   returnDate?: string;
+  onward?: { to: PlaceRef; date: string };
   adults: number;
   children: number;
   cabin: Cabin;
@@ -42,6 +43,7 @@ export type Flight = {
   refundable: boolean;
   co2Kg: number;
   priceGBP: number; // total for all travellers
+  onward?: Flight;
 };
 
 export type Stay = {
@@ -124,6 +126,9 @@ export function buildSentence(q: TripQuery): string {
   if (q.kind === "hotel") {
     const city = cityForPlace(q.to.code)?.city ?? q.to.code;
     return `Need a hotel in ${city} from ${fmtShort(q.date)} to ${fmtShort(q.returnDate ?? addDays(q.date, 1))} for ${who}`;
+  }
+  if (q.onward) {
+    return `Multi-city flights from ${q.from?.code} to ${q.to.code} on ${fmtShort(q.date)}, then to ${q.onward.to.code} on ${fmtShort(q.onward.date)} for ${who} in ${q.cabin}`;
   }
   const trip = q.tripType === "return" ? "return" : "one way";
   const back = q.tripType === "return" && q.returnDate ? `, back on ${fmtShort(q.returnDate)}` : "";
@@ -277,7 +282,26 @@ function makeFlights(q: TripQuery): Flight[] {
       priceGBP: Math.round(total),
     });
   }
-  return flights.sort((a, b) => a.priceGBP - b.priceGBP);
+  if (!q.onward) return flights.sort((a, b) => a.priceGBP - b.priceGBP);
+
+  const onwardFlights = makeFlights({
+    ...q, from: q.to, to: q.onward.to, date: q.onward.date, returnDate: undefined, onward: undefined,
+  });
+  return flights.flatMap((first) => {
+    const onward = onwardFlights.find((flight) => flight.fromCode === first.toCode
+      && (flight.depDate > first.arrDate || (flight.depDate === first.arrDate && flight.depTime > first.arrTime)));
+    if (!onward) return [];
+    return [{
+      ...first,
+      priceGBP: first.priceGBP + onward.priceGBP,
+      carryOn: Math.min(first.carryOn, onward.carryOn),
+      checked: Math.min(first.checked, onward.checked),
+      changeFeeGBP: first.changeFeeGBP === null || onward.changeFeeGBP === null ? null : first.changeFeeGBP + onward.changeFeeGBP,
+      refundable: first.refundable && onward.refundable,
+      co2Kg: first.co2Kg + onward.co2Kg,
+      onward,
+    }];
+  }).sort((a, b) => a.priceGBP - b.priceGBP);
 }
 
 function makeStays(q: TripQuery): Stay[] {
@@ -388,7 +412,7 @@ export function runSearch(prompt: string, query: TripQuery | null, todayISO: str
   const q = query ?? parsePrompt(prompt, todayISO, originCode);
   // No destination named: answer with priced ideas instead of a question.
   if (!q) return { ok: false, ...ideasFor(prompt, originCode, todayISO, rate) };
-  const dest = cityForPlace(q.to.code)!;
+  const dest = cityForPlace(q.onward?.to.code ?? q.to.code)!;
   return {
     ok: true,
     title: `Trip to ${dest.city}`,

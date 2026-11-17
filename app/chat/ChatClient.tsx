@@ -94,11 +94,11 @@ export function ChatClient({ id }: { id: string }) {
         setPicked({});
         setSecondsLeft(HOLD_SECONDS);
         const hasFlights = data.flights.length > 0;
-        setKind(hasFlights ? "flights" : "stays");
+        setKind(hasFlights || data.query.kind === "flight" ? "flights" : "stays");
         const parts = [];
-        if (hasFlights) parts.push(`${data.flights.length} flights to ${data.query.to.code}`);
+        if (hasFlights) parts.push(`${data.flights.length} flight options to ${data.query.onward?.to.code ?? data.query.to.code}`);
         if (data.stays.length > 0) parts.push(`${data.stays.length} stays`);
-        say("mylz", `${parts.join(" and ")} · in Results`, true);
+        say("mylz", parts.length ? `${parts.join(" and ")} · in Results` : "No options match these dates. Try a later onward departure.", true);
         setTab("results");
       } catch {
         say("mylz", "Something went wrong with that search. Please try again.");
@@ -219,7 +219,7 @@ export function ChatClient({ id }: { id: string }) {
 
   const q = result?.query;
   const destCity = q ? cityForPlace(q.to.code)?.city ?? q.to.code : "";
-  const tripLabel = q?.tripType === "return" ? "Return" : "One way";
+  const tripLabel = q?.onward ? "Multi-city" : q?.tripType === "return" ? "Return" : "One way";
   const clock = `${String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:${String(secondsLeft % 60).padStart(2, "0")}`;
   const suggestions = result && flights.length > 0
     ? ["Evening departures", `Show me flights under ${format(Math.ceil((flights[Math.min(5, flights.length - 1)].priceGBP * 1.2) / 5) * 5)}`, "Direct flights only", "Show all"]
@@ -407,7 +407,7 @@ export function ChatClient({ id }: { id: string }) {
               <header className="pane-head trip-results-heading">
                 <div>
                   <small>Results · latest ask</small>
-                  <h2>{kind === "flights" ? `Flights to ${q.to.code} · ${tripLabel.toLowerCase()}` : `Stays in ${destCity}`}</h2>
+                  <h2>{kind === "flights" ? q.onward ? `Flights via ${q.to.code} to ${q.onward.to.code}` : `Flights to ${q.to.code} · ${tripLabel.toLowerCase()}` : `Stays in ${destCity}`}</h2>
                 </div>
                 <img src={DESTINATION_PHOTOS[cityForPlace(q.to.code)?.code ?? ""] ?? HERO_POSTER} alt=""
                   onError={(event) => {
@@ -467,6 +467,7 @@ export function ChatClient({ id }: { id: string }) {
                         <small>{f.toCode}</small>
                       </div>
                     </div>
+                    {f.onward && <p className="details-sub">Then {f.onward.fromCode} → {f.onward.toCode} · {fmtShort(f.onward.depDate)} · {f.onward.depTime}–{f.onward.arrTime}</p>}
                     <div className="flight-foot">
                       <strong className="price">{format(f.priceGBP)}</strong>
                       <button type="button" className="link-btn" onClick={() => setDetails(f)}>
@@ -513,7 +514,7 @@ export function ChatClient({ id }: { id: string }) {
               <div>
                 <small>Your trip</small>
                 <strong>
-                  {[picked.flight && `${picked.flight.fromCode} → ${picked.flight.toCode}`, picked.stay?.name].filter(Boolean).join(" + ")} · {format(tripTotal)}
+                  {[picked.flight && `${picked.flight.fromCode} → ${picked.flight.toCode}${picked.flight.onward ? ` → ${picked.flight.onward.toCode}` : ""}`, picked.stay?.name].filter(Boolean).join(" + ")} · {format(tripTotal)}
                 </strong>
               </div>
               <button type="button" className="btn-ghost sm on-dark" onClick={() => setLogin("save")}>
@@ -555,6 +556,7 @@ export function ChatClient({ id }: { id: string }) {
                 <small>{fmtLong(details.arrDate)}</small>
               </div>
             </div>
+            {details.onward && <p className="details-sub">Onward flight {details.onward.flightNo} · {details.onward.fromCode} → {details.onward.toCode} · {fmtLong(details.onward.depDate)} · {details.onward.depTime}–{details.onward.arrTime} · {details.onward.airline}</p>}
             {q.tripType === "return" && q.returnDate && <p className="details-sub">Return on {fmtLong(q.returnDate)} is included in this price.</p>}
             <small className="included-title">Included in this ticket</small>
             <ul className="included">

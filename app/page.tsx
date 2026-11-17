@@ -63,7 +63,7 @@ export default function HomePage() {
             <div className="hero-head">
               <span className="hero-pill">Talk. Book. Go.</span>
               <h1>Let's Plan and <em>Go</em></h1>
-              <p className="hero-sub">Tell mylz where you want to go. Search flights and stays by typing, speaking, or using the search form.</p>
+              <p className="hero-sub">Find flights and stays in one conversation.</p>
             </div>
           </div>
           <SearchPanel />

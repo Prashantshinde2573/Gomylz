@@ -1619,3 +1619,70 @@ main h2 { font-size: clamp(30px, 4vw, 52px); letter-spacing: -.045em; }
   .chat-destination-ideas button { scroll-snap-align: start; }
   .chat-planner-banner::after { background: linear-gradient(90deg, rgb(3 16 29 / 93%), rgb(3 16 29 / 48%)); }
 }
+
+.booking-switch {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-weight: 700;
+}
+.booking-switch-track {
+  display: grid;
+  align-items: center;
+  width: 36px;
+  height: 21px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.booking-switch-track::after {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--slate);
+  transition: transform .18s ease;
+}
+.booking-switch[aria-checked="true"] .booking-switch-track { background: var(--cyan); }
+.booking-switch[aria-checked="true"] .booking-switch-track::after { background: var(--navy); transform: translateX(14px); }
+.search-card[data-mode="ai"] { max-width: 620px; padding: 7px; }
+.search-card[data-mode="ai"] .ai-box { background: var(--white); border-color: transparent; height: 42px; padding-inline: 7px; }
+.search-card[data-mode="ai"] .ai-row > .search-btn { width: 40px; height: 40px; padding: 0; }
+.search-card .manual-modes {
+  align-self: flex-start;
+  background: var(--ground);
+  border-color: var(--line);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.manual-modes button { color: var(--navy); }
+.manual-modes button[aria-pressed="true"] { background: var(--aqua); }
+.manual-modes button:hover { background: var(--mist); }
+.sc-opts .sc-trip { flex-wrap: wrap; gap: 7px 14px; }
+.sc-class select { border: 1px solid var(--line); border-radius: 8px; background: var(--ground); padding-inline: 8px; }
+.sc-onward {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.search-card[data-mode="stays"] .sc-row { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)) auto; }
+@media (max-width: 839px) {
+  .search-card[data-mode="stays"] .sc-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .search-card[data-mode="stays"] .search-btn { grid-column: 1 / -1; }
+  .sc-onward { grid-row: auto; }
+}
+@media (max-width: 520px) {
+  .search-card[data-mode="stays"] .sc-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .search-card[data-mode="stays"] .sc-field:nth-child(4) { grid-column: 1 / -1; }
+  .sc-onward { grid-template-columns: minmax(0, 1fr); }
+}
