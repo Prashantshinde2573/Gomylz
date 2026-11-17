@@ -1,117 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCurrency } from "./CurrencyProvider";
-import { CheckIcon, FlyIcon } from "./Icons";
+import { BedIcon, FlyIcon, PlaneIcon, SparkleIcon } from "./Icons";
 import { PREFILL_EVENT } from "./PromptForm";
 
-const SENTENCE = "A long weekend in Lisbon for two, flying from London.";
-// Example prices in GBP. Replace with a real recent booking before launch.
+const SENTENCE = "A long weekend in Lisbon for two, flying from London. Flights and a hotel, please.";
+const STEPS = ["Ask", "Compare", "Refine"];
 const OPTIONS = [
-  { id: "a", tag: "Best value", flight: "LGW → LIS · direct · Fri 07:30", stay: "Guesthouse in Alfama · 3 nights", total: 438 },
-  { id: "b", tag: "Best timing", flight: "LHR → LIS · direct · Fri 10:15", stay: "Hotel in Chiado · 3 nights", total: 562 },
+  { id: "early", tag: "Early departure", flight: "London Gatwick → Lisbon", time: "07:30 · Direct", price: 178 },
+  { id: "late", tag: "Later departure", flight: "London Heathrow → Lisbon", time: "18:15 · Direct", price: 204 },
 ];
-const STEPS = ["Ask", "Search", "Compare", "Booked"];
 
-/** "See it in action": one sentence, priced options, booked. Plays by itself; the steps are tappable. */
 export function DemoShowcase() {
   const { format } = useCurrency();
-  const [step, setStep] = useState(0);
-  const [typed, setTyped] = useState(0);
-  const [auto, setAuto] = useState(true);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setAuto(false);
-      setTyped(SENTENCE.length);
-      setStep(2);
-    }
-  }, []);
-
-  // Type the sentence out on step 0.
-  useEffect(() => {
-    if (step !== 0 || !auto) return;
-    setTyped(0);
-    const t = window.setInterval(() => setTyped((n) => Math.min(n + 1, SENTENCE.length)), 38);
-    return () => window.clearInterval(t);
-  }, [step, auto]);
-
-  useEffect(() => {
-    if (!auto) return;
-    const wait = [SENTENCE.length * 38 + 900, 1500, 3600, 3200][step];
-    const t = window.setTimeout(() => setStep((s) => (s + 1) % STEPS.length), wait);
-    return () => window.clearTimeout(t);
-  }, [step, auto]);
-
-  function go(i: number) {
-    setAuto(false);
-    setTyped(SENTENCE.length);
-    setStep(i);
-  }
+  const [step, setStep] = useState(1);
+  const flightOptions = step === 2 ? OPTIONS.slice(1) : OPTIONS;
 
   return (
-    <div className="showcase">
-      <div className="showcase-steps" role="tablist" aria-label="Demo steps">
-        {STEPS.map((label, i) => (
-          <button key={label} type="button" role="tab" aria-selected={step === i} className={i < step ? "done" : ""} onClick={() => go(i)}>
-            <i>{i + 1}</i>
-            {label}
-          </button>
+    <div className="product-preview">
+      <header className="product-preview-head"><span><SparkleIcon size={19} /> mylzAI</span><small>Interactive demo</small></header>
+      <div className="preview-steps" role="group" aria-label="Walkthrough step">
+        {STEPS.map((label, index) => (
+          <button key={label} type="button" aria-pressed={step === index} onClick={() => setStep(index)}>{label}</button>
         ))}
       </div>
-
-      <div className="showcase-stage" aria-live="polite">
-        <p className="bubble user">
-          {SENTENCE.slice(0, step === 0 ? typed : SENTENCE.length)}
-          {step === 0 && typed < SENTENCE.length && <span className="caret" aria-hidden="true" />}
-        </p>
-
-        {step === 1 && (
-          <div className="bubble ai typing">
-            <span className="sr-only">mylz is searching</span>
-            <i />
-            <i />
-            <i />
-          </div>
-        )}
-
-        {step >= 2 && (
-          <>
-            <p className="bubble ai">Two good matches. Both are direct, with the stay a short walk from the centre.</p>
-            <div className="showcase-options">
-              {OPTIONS.map((o, i) => (
-                <article key={o.id} className={step === 3 && i === 0 ? "is-booked" : ""}>
-                  <small>{o.tag}</small>
-                  <span>{o.flight}</span>
-                  <span>{o.stay}</span>
-                  <strong>
-                    {format(o.total)} <em>total for two</em>
-                  </strong>
-                </article>
-              ))}
-            </div>
-          </>
-        )}
-
-        {step === 3 && (
-          <div className="showcase-booked">
-            <span>
-              <CheckIcon />
-            </span>
-            <div>
-              <strong>Booked.</strong> Confirmations from the airline and the hotel are in your inbox.
-            </div>
+      <div className="product-preview-body" aria-live="polite">
+        <p className="preview-prompt">“{step === 2 ? "Show me direct evening flights." : SENTENCE}”</p>
+        {step === 0 ? (
+          <div className="preview-context"><SparkleIcon size={20} /><div><strong>London to Lisbon</strong><p>Long weekend · 2 adults · Flights + stay</p></div></div>
+        ) : (
+          <div className="preview-options">
+            {flightOptions.map((option) => (
+              <article key={option.id}>
+                <span className="preview-option-icon"><PlaneIcon size={20} /></span>
+                <div><small>{option.tag}</small><h3>{option.flight}</h3><p>{option.time}</p></div>
+                <strong>{format(option.price)}</strong>
+              </article>
+            ))}
+            <article>
+              <span className="preview-option-icon"><BedIcon size={20} /></span>
+              <div><small>Stay</small><h3>Guesthouse in Alfama</h3><p>Lisbon · 3 nights</p></div>
+              <strong>{format(260)}</strong>
+            </article>
           </div>
         )}
       </div>
-
-      <div className="showcase-foot">
-        <small>Example prices, for illustration.</small>
-        <button type="button" className="btn-accent sm btn-fly" onClick={() => window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail: SENTENCE }))}>
-          Try this prompt
-          <FlyIcon size={16} />
+      <footer className="product-preview-foot">
+        <small>Sample options and prices</small>
+        <button className="btn-dark sm btn-fly" type="button" onClick={() => window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail: SENTENCE }))}>
+          Try this prompt <FlyIcon size={15} />
         </button>
-      </div>
+      </footer>
     </div>
   );
 }

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
-import { Nav } from "@/components/Nav";
 import { LOGO } from "@/lib/assets";
 import "./globals.css";
 
 const SITE = "https://gomylz.com";
 const DESCRIPTION =
-  "Tell mylz your trip in one sentence. It finds flights and stays and books them for you, with a real person on hand if anything goes wrong. IATA accredited.";
+  "Search flights and stays with mylzAI. Describe your trip by voice or text, or use the search form to compare options.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -42,24 +41,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Outfit:wght@400;500;600&family=Syne:wght@700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap"
         />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <CurrencyProvider>
           <div className="shell" id="top">
-            <Nav />
             {children}
             <footer className="footer">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="footer-logo" src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} loading="lazy" />
+              <div className="footer-brand">
+                <a href="/" aria-label="Mylz home"><img className="footer-logo" src={LOGO.src} alt="mylz" width={LOGO.width} height={LOGO.height} loading="lazy" /></a>
+                <p>The best moments in life happen offline.</p>
+              </div>
+              <nav aria-label="Explore Mylz">
+                <strong>Explore</strong>
+                <a href="/#stays">Stays</a>
+                <a href="/#demo">How it works</a>
+                <a href="/#trending">Destinations</a>
+                <a href="/#faq">FAQ</a>
+              </nav>
               <nav aria-label="Legal">
+                <strong>Company</strong>
                 <a href="https://gomylz.com/terms-and-conditions">Terms</a>
                 <a href="https://gomylz.com/privacy">Privacy</a>
                 <a href="https://gomylz.com/sanctions-compliance">Sanctions compliance</a>
               </nav>
-              <span>© 2026 Milesfactory Limited · No. 16131941 · IATA TIDS 96192412</span>
+              <span className="footer-legal">© 2026 Milesfactory Limited · No. 16131941 · IATA TIDS 96192412</span>
             </footer>
           </div>
         </CurrencyProvider>

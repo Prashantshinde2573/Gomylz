@@ -15,9 +15,9 @@ type Message =
   | { id: number; role: "mylz"; text: string; toResults?: boolean; ideas?: Idea[] };
 
 const SEARCH_STEPS = [
-  "Asking the airlines for live fares",
-  "Checking seats and bags on each",
-  "Holding the best prices",
+  "Finding sample fares and stays",
+  "Preparing baggage and fare details",
+  "Preparing prices and trip options",
   "Sorting by what you asked for",
 ];
 const PAGE = 6;
@@ -38,12 +38,13 @@ export function ChatClient({ id }: { id: string }) {
   const [shown, setShown] = useState(PAGE);
   const [details, setDetails] = useState<Flight | null>(null);
   const [picked, setPicked] = useState<{ flight?: Flight; stay?: Stay }>({});
-  const [login, setLogin] = useState<null | "save" | "book">(null);
+  const [login, setLogin] = useState<null | "entry" | "save" | "book">(null);
   const [secondsLeft, setSecondsLeft] = useState(HOLD_SECONDS);
 
   const nextId = useRef(1);
   const started = useRef(false);
-  const endRef = useRef<HTMLDivElement>(null);
+  const offeredLogin = useRef(false);
+  const transcriptRef = useRef<HTMLDivElement>(null);
   const speech = useSpeech(setDraft);
 
   const say = useCallback((role: Message["role"], text: string, toResults = false, ideas?: Idea[]) => {
@@ -53,6 +54,10 @@ export function ChatClient({ id }: { id: string }) {
   /** A new search: from the homepage, or a follow-up that names a new trip. */
   const search = useCallback(
     async (prompt: string, query: TripQuery | null) => {
+      if (!offeredLogin.current) {
+        offeredLogin.current = true;
+        setLogin("entry");
+      }
       setSearching(true);
       setStep(0);
       try {
@@ -113,7 +118,7 @@ export function ChatClient({ id }: { id: string }) {
     if (started.current) return;
     started.current = true;
     const seed = readChatSeed(id);
-    if (!seed) return;
+    if (!seed?.prompt) return;
     say("user", seed.prompt);
     void search(seed.prompt, seed.query);
   }, [id, say, search]);
@@ -139,7 +144,8 @@ export function ChatClient({ id }: { id: string }) {
   }, [result]);
 
   useEffect(() => {
-    if (tab === "chat") endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const transcript = transcriptRef.current;
+    if (transcript) transcript.scrollTop = transcript.scrollHeight;
   }, [messages, searching, tab]);
 
   function onSubmit(e: React.FormEvent) {
@@ -157,7 +163,7 @@ export function ChatClient({ id }: { id: string }) {
     else void handle(text);
   }
 
-  // Selecting never asks for an account. Log in is offered only at "Save trip" or "Book".
+  // Selecting an option keeps the visitor in the workspace.
   function selectFlight(f: Flight) {
     setPicked((p) => ({ ...p, flight: f }));
     setDetails(null);
@@ -170,6 +176,7 @@ export function ChatClient({ id }: { id: string }) {
   function continueAsGuest() {
     const wasBooking = login === "book";
     setLogin(null);
+    if (login === "entry") return;
     setTab("chat");
     say("mylz", wasBooking ? "Continuing as a guest. Demo: checkout is not connected, so the booking stops here." : "No problem. Your trip stays open in this tab while you keep looking.");
   }
@@ -202,249 +209,266 @@ export function ChatClient({ id }: { id: string }) {
         <button type="button" role="tab" aria-selected={tab === "chat"} onClick={() => setTab("chat")}>
           Chat
         </button>
-        <button type="button" role="tab" aria-selected={tab === "results"} onClick={() => setTab("results")} disabled={!result}>
+        <button type="button" role="tab" aria-selected={tab === "results"} onClick={() => setTab("results")} disabled={!result && !searching}>
           Results
         </button>
       </div>
 
       <p className="chat-note">Demo: airlines, fares and stays here are sample data, and nothing is booked.</p>
 
-      {tab === "chat" && (
+      <div className="chat-workspace" data-view={tab}>
         <section className="chat-pane" aria-label="Chat">
           <header className="pane-head">
             <small>Chat</small>
             <h1>{result?.title ?? "New trip"}</h1>
           </header>
 
-          {messages.length === 0 && !searching && (
-            <div className="bubble ai">Where do you want to go? Try “Lisbon for a long weekend, two of us”.</div>
-          )}
+          <div className="chat-transcript" ref={transcriptRef}>
+            {messages.length === 0 && !searching && (
+              <div className="bubble ai">Where do you want to go? Try “Lisbon for a long weekend, two of us”.</div>
+            )}
 
-          {messages.map((m) =>
-            m.role === "user" ? (
-              <div key={m.id} className="bubble user">
-                {m.text}
+            {messages.map((m) =>
+              m.role === "user" ? (
+                <div key={m.id} className="bubble user">
+                  {m.text}
+                </div>
+              ) : m.ideas ? (
+                <div key={m.id} className="ai-block">
+                  <div className="bubble ai">{m.text}</div>
+                  <div className="ideas">
+                    {m.ideas.map((idea) => (
+                      <article key={idea.code} className="idea">
+                        <span className="idea-code" aria-hidden="true">{idea.code}</span>
+                        <div>
+                          <strong>{idea.city}</strong>
+                          <small>{idea.line}</small>
+                        </div>
+                        <p>
+                          from <b>{format(idea.fromGBP)}</b> return
+                          <small>{fmtShort(idea.out)} – {fmtShort(idea.back)}</small>
+                        </p>
+                        <button type="button" className="btn-accent sm btn-fly" onClick={() => send(idea.prompt)}>
+                          Plan this
+                          <FlyIcon size={16} />
+                        </button>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              ) : m.toResults ? (
+                <button key={m.id} type="button" className="bubble ai as-link" onClick={() => setTab("results")}>
+                  {m.text} <ArrowRightIcon size={14} />
+                </button>
+              ) : (
+                <div key={m.id} className="bubble ai">
+                  {m.text}
+                </div>
+              ),
+            )}
+
+            {searching && (
+              <div className="searching" role="status">
+                <small>mylz</small>
+                <strong>{step >= SEARCH_STEPS.length - 1 ? "Almost there…" : "Searching…"}</strong>
+                <ul>
+                  {SEARCH_STEPS.map((s, i) => (
+                    <li key={s} className={i < step ? "done" : i === step ? "now" : ""}>
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+                <p>You can keep typing — I&apos;ll answer in order.</p>
               </div>
-            ) : m.ideas ? (
-              <div key={m.id} className="ai-block">
-                <div className="bubble ai">{m.text}</div>
-                <div className="ideas">
-                  {m.ideas.map((idea) => (
-                    <article key={idea.code} className="idea">
-                      <span className="idea-code" aria-hidden="true">{idea.code}</span>
-                      <div>
-                        <strong>{idea.city}</strong>
-                        <small>{idea.line}</small>
-                      </div>
-                      <p>
-                        from <b>{format(idea.fromGBP)}</b> return
-                        <small>{fmtShort(idea.out)} – {fmtShort(idea.back)}</small>
-                      </p>
-                      <button type="button" className="btn-accent sm btn-fly" onClick={() => send(idea.prompt)}>
-                        Plan this
-                        <FlyIcon size={16} />
-                      </button>
-                    </article>
+            )}
+
+            {queue.map((text, i) => (
+              <div key={`${i}-${text}`} className="bubble user is-queued">
+                {text}
+              </div>
+            ))}
+
+            {!searching && suggestions.length > 0 && (
+              <div className="suggest">
+                <small>Suggestions · tap to send</small>
+                <div>
+                  {suggestions.map((s) => (
+                    <button key={s} type="button" className="chip" onClick={() => send(s)}>
+                      {s}
+                    </button>
                   ))}
                 </div>
               </div>
-            ) : m.toResults ? (
-              <button key={m.id} type="button" className="bubble ai as-link" onClick={() => setTab("results")}>
-                {m.text} <ArrowRightIcon size={14} />
+            )}
+          </div>
+          <form className="chat-form" onSubmit={onSubmit}>
+            {searching && <small className="composer-note">Chat is waiting on a search · new messages are sent in order</small>}
+            <div>
+              <label className="sr-only" htmlFor="chat-input">
+                Message mylz
+              </label>
+              <input
+                id="chat-input"
+                type="text"
+                autoComplete="off"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder={
+                  searching
+                    ? "Type a follow-up — it will queue"
+                    : result && q
+                      ? `Filter flights to ${q.to.code}: direct, times, airlines, price...`
+                      : "Ask anything about your trip"
+                }
+              />
+              {speech.supported && (
+                <button className="mic" type="button" aria-label="Record a message" aria-pressed={speech.listening} onClick={speech.toggle}>
+                  <MicIcon />
+                </button>
+              )}
+              <button className="go" type="submit" aria-label="Send">
+                <ArrowRightIcon />
               </button>
-            ) : (
-              <div key={m.id} className="bubble ai">
-                {m.text}
-              </div>
-            ),
-          )}
-
-          {searching && (
-            <div className="searching" role="status">
-              <small>mylz</small>
-              <strong>{step >= SEARCH_STEPS.length - 1 ? "Almost there…" : "Searching…"}</strong>
-              <ul>
-                {SEARCH_STEPS.map((s, i) => (
-                  <li key={s} className={i < step ? "done" : i === step ? "now" : ""}>
-                    {s}
-                  </li>
-                ))}
-              </ul>
-              <p>Usually 10–15 seconds. You can keep typing — I&apos;ll answer in order.</p>
             </div>
-          )}
-
-          {queue.map((text, i) => (
-            <div key={`${i}-${text}`} className="bubble user is-queued">
-              {text}
-            </div>
-          ))}
-
-          {!searching && suggestions.length > 0 && (
-            <div className="suggest">
-              <small>Suggestions · tap to send</small>
-              <div>
-                {suggestions.map((s) => (
-                  <button key={s} type="button" className="chip" onClick={() => send(s)}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          <div ref={endRef} />
+          </form>
         </section>
-      )}
 
-      {tab === "results" && result && q && (
         <section className="results-pane" aria-label="Results">
-          <header className="pane-head">
-            <small>Results · latest ask</small>
-            <h1>
-              {kind === "flights" ? `Flights to ${q.to.code} · ${tripLabel.toLowerCase()}` : `Stays in ${destCity}`}
-            </h1>
-          </header>
+          {searching && (
+            <div className="results-loading" role="status">
+              <header className="pane-head"><small>Results · searching</small><h2>Finding trip options…</h2></header>
+              <progress max={SEARCH_STEPS.length} value={step + 1} aria-label="Search progress" />
+              {[0, 1, 2].map((item) => <div className="result-skeleton" key={item} aria-hidden="true"><i /><i /></div>)}
+            </div>
+          )}
+          {!searching && !result && (
+            <div className="results-empty">
+              <FlyIcon size={28} />
+              <h2>Your trip options</h2>
+              <p>Ask mylz for a trip to see flights and stays here.</p>
+            </div>
+          )}
+          {!searching && result && q && (
+            <>
+              <header className="pane-head">
+                <small>Results · latest ask</small>
+                <h2>
+                  {kind === "flights" ? `Flights to ${q.to.code} · ${tripLabel.toLowerCase()}` : `Stays in ${destCity}`}
+                </h2>
+              </header>
 
-          <div className="kind-tabs" role="tablist" aria-label="Flights or stays">
-            <button type="button" role="tab" aria-selected={kind === "flights"} disabled={result.flights.length === 0} onClick={() => setKind("flights")}>
-              Flights <b>{result.flights.length > 0 ? flights.length : "—"}</b>
-            </button>
-            <button type="button" role="tab" aria-selected={kind === "stays"} disabled={result.stays.length === 0} onClick={() => setKind("stays")}>
-              Stays <b>{result.stays.length > 0 ? result.stays.length : "—"}</b>
-            </button>
-          </div>
+              <div className="kind-tabs" role="tablist" aria-label="Flights or stays">
+                <button type="button" role="tab" aria-selected={kind === "flights"} disabled={result.flights.length === 0} onClick={() => setKind("flights")}>
+                  Flights <b>{result.flights.length > 0 ? flights.length : "—"}</b>
+                </button>
+                <button type="button" role="tab" aria-selected={kind === "stays"} disabled={result.stays.length === 0} onClick={() => setKind("stays")}>
+                  Stays <b>{result.stays.length > 0 ? result.stays.length : "—"}</b>
+                </button>
+              </div>
 
-          <div className="results-meta">
-            <p>
-              {kind === "flights" ? `We found (${flights.length}) flights for your trip.` : `We found (${result.stays.length}) stays for your trip.`}
-              <span>
-                {kind === "flights" ? `${q.cabin} · ${travellersText(q)} · ${tripLabel}` : `${travellersText(q)} · ${fmtShort(q.date)} to ${fmtShort(q.returnDate ?? q.date)}`}
-              </span>
-            </p>
-            <small className="expires">Results expire in {clock}</small>
-          </div>
-
-          {kind === "flights" &&
-            flights.slice(0, shown).map((f) => (
-              <article key={f.id} className={`flight${picked.flight?.id === f.id ? " is-picked" : ""}`}>
-                <div className="flight-top">
-                  <span className="airline">
-                    <i aria-hidden="true">{f.flightNo.slice(0, 2)}</i>
-                    <strong>{f.airline}</strong> {f.cabin}
+              <div className="results-meta">
+                <p>
+                  {kind === "flights" ? `We found (${flights.length}) flights for your trip.` : `We found (${result.stays.length}) stays for your trip.`}
+                  <span>
+                    {kind === "flights" ? `${q.cabin} · ${travellersText(q)} · ${tripLabel}` : `${travellersText(q)} · ${fmtShort(q.date)} to ${fmtShort(q.returnDate ?? q.date)}`}
                   </span>
-                  <span className="fare-icons">
-                    <span title={`Carry-on bags: ${f.carryOn}`}><BagIcon /> ×{f.carryOn}</span>
-                    <span title={`Checked bags: ${f.checked}`}><SuitcaseIcon /> ×{f.checked}</span>
-                    <span title={f.changeFeeGBP === null ? "Changes: not allowed" : `Changes: allowed with a ${format(f.changeFeeGBP)} fee`} className={f.changeFeeGBP === null ? "off" : ""}><SwapIcon /></span>
-                    <span title={f.refundable ? "Cancellation: refundable" : "Cancellation: non-refundable"} className={f.refundable ? "" : "off"}><CalendarXIcon /></span>
-                  </span>
-                </div>
-                <div className="flight-times">
-                  <div>
-                    <small>{fmtShort(f.depDate)}</small>
-                    <strong>{f.depTime}</strong>
-                    <small>{f.fromCode}</small>
-                  </div>
-                  <div className="flight-line">
-                    <small>{fmtDuration(f.durationMin)}</small>
-                    <i aria-hidden="true" />
-                    <small className="stops">{f.stops === 0 ? "Direct" : "1 stop"}</small>
-                  </div>
-                  <div className="arr">
-                    <small>{fmtShort(f.arrDate)}</small>
-                    <strong>{f.arrTime}</strong>
-                    <small>{f.toCode}</small>
-                  </div>
-                </div>
-                <div className="flight-foot">
-                  <strong className="price">{format(f.priceGBP)}</strong>
-                  <button type="button" className="link-btn" onClick={() => setDetails(f)}>
-                    See details ›
-                  </button>
-                  <button type="button" className="btn-dark sm" onClick={() => selectFlight(f)}>
-                    {picked.flight?.id === f.id ? "Selected" : "Select"}
-                  </button>
-                </div>
-              </article>
-            ))}
+                </p>
+                <small className="expires">Demo results · {clock} remaining</small>
+              </div>
 
-          {kind === "flights" && flights.length > shown && (
-            <button type="button" className="more" onClick={() => setShown((n) => n + 12)}>
-              See {flights.length - shown} more flight options
-            </button>
+              {kind === "flights" &&
+                flights.slice(0, shown).map((f) => (
+                  <article key={f.id} className={`flight${picked.flight?.id === f.id ? " is-picked" : ""}`}>
+                    <div className="flight-top">
+                      <span className="airline">
+                        <i aria-hidden="true">{f.flightNo.slice(0, 2)}</i>
+                        <strong>{f.airline}</strong> {f.cabin}
+                      </span>
+                      <span className="fare-icons">
+                        <span title={`Carry-on bags: ${f.carryOn}`}><BagIcon /> ×{f.carryOn}</span>
+                        <span title={`Checked bags: ${f.checked}`}><SuitcaseIcon /> ×{f.checked}</span>
+                        <span title={f.changeFeeGBP === null ? "Changes: not allowed" : `Changes: allowed with a ${format(f.changeFeeGBP)} fee`} className={f.changeFeeGBP === null ? "off" : ""}><SwapIcon /></span>
+                        <span title={f.refundable ? "Cancellation: refundable" : "Cancellation: non-refundable"} className={f.refundable ? "" : "off"}><CalendarXIcon /></span>
+                      </span>
+                    </div>
+                    <div className="flight-times">
+                      <div>
+                        <small>{fmtShort(f.depDate)}</small>
+                        <strong>{f.depTime}</strong>
+                        <small>{f.fromCode}</small>
+                      </div>
+                      <div className="flight-line">
+                        <small>{fmtDuration(f.durationMin)}</small>
+                        <i aria-hidden="true" />
+                        <small className="stops">{f.stops === 0 ? "Direct" : "1 stop"}</small>
+                      </div>
+                      <div className="arr">
+                        <small>{fmtShort(f.arrDate)}</small>
+                        <strong>{f.arrTime}</strong>
+                        <small>{f.toCode}</small>
+                      </div>
+                    </div>
+                    <div className="flight-foot">
+                      <strong className="price">{format(f.priceGBP)}</strong>
+                      <button type="button" className="link-btn" onClick={() => setDetails(f)}>
+                        See details ›
+                      </button>
+                      <button type="button" className="btn-dark sm" onClick={() => selectFlight(f)}>
+                        {picked.flight?.id === f.id ? "Selected" : "Select"}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+
+              {kind === "flights" && flights.length > shown && (
+                <button type="button" className="more" onClick={() => setShown((n) => n + 12)}>
+                  See {flights.length - shown} more flight options
+                </button>
+              )}
+
+              {kind === "stays" &&
+                result.stays.map((s) => (
+                  <article key={s.id} className={`flight stay${picked.stay?.id === s.id ? " is-picked" : ""}`}>
+                    <div className="flight-top">
+                      <span className="airline">
+                        <strong>{s.name}</strong>
+                      </span>
+                      <span className="fare-icons">{s.type} · {s.area}</span>
+                    </div>
+                    <p className="stay-perks">{s.perks} · {s.nights} {s.nights === 1 ? "night" : "nights"}</p>
+                    <div className="flight-foot">
+                      <strong className="price">
+                        {format(s.pricePerNightGBP * s.nights)} <small>{format(s.pricePerNightGBP)} per night</small>
+                      </strong>
+                      <button type="button" className="btn-dark sm" onClick={() => selectStay(s)}>
+                        {picked.stay?.id === s.id ? "Selected" : "Select"}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+            </>
           )}
 
-          {kind === "stays" &&
-            result.stays.map((s) => (
-              <article key={s.id} className={`flight stay${picked.stay?.id === s.id ? " is-picked" : ""}`}>
-                <div className="flight-top">
-                  <span className="airline">
-                    <strong>{s.name}</strong>
-                  </span>
-                  <span className="fare-icons">{s.type} · {s.area}</span>
-                </div>
-                <p className="stay-perks">{s.perks} · {s.nights} {s.nights === 1 ? "night" : "nights"}</p>
-                <div className="flight-foot">
-                  <strong className="price">
-                    {format(s.pricePerNightGBP * s.nights)} <small>{format(s.pricePerNightGBP)} per night</small>
-                  </strong>
-                  <button type="button" className="btn-dark sm" onClick={() => selectStay(s)}>
-                    {picked.stay?.id === s.id ? "Selected" : "Select"}
-                  </button>
-                </div>
-              </article>
-            ))}
+          {!searching && (picked.flight || picked.stay) && (
+            <div className="trip-bar" role="status">
+              <div>
+                <small>Your trip</small>
+                <strong>
+                  {[picked.flight && `${picked.flight.fromCode} → ${picked.flight.toCode}`, picked.stay?.name].filter(Boolean).join(" + ")} · {format(tripTotal)}
+                </strong>
+              </div>
+              <button type="button" className="btn-ghost sm on-dark" onClick={() => setLogin("save")}>
+                Save trip
+              </button>
+              <button type="button" className="btn-accent sm btn-fly" onClick={() => setLogin("book")}>
+                Book
+                <FlyIcon size={16} />
+              </button>
+            </div>
+          )}
+
         </section>
-      )}
-
-      {(picked.flight || picked.stay) && (
-        <div className="trip-bar" role="status">
-          <div>
-            <small>Your trip</small>
-            <strong>
-              {[picked.flight && `${picked.flight.fromCode} → ${picked.flight.toCode}`, picked.stay?.name].filter(Boolean).join(" + ")} · {format(tripTotal)}
-            </strong>
-          </div>
-          <button type="button" className="btn-ghost sm on-dark" onClick={() => setLogin("save")}>
-            Save trip
-          </button>
-          <button type="button" className="btn-accent sm btn-fly" onClick={() => setLogin("book")}>
-            Book
-            <FlyIcon size={16} />
-          </button>
-        </div>
-      )}
-
-      <form className="chat-form" onSubmit={onSubmit}>
-        {searching && <small className="composer-note">Chat is waiting on a search · new messages are sent in order</small>}
-        <div>
-          <label className="sr-only" htmlFor="chat-input">
-            Message mylz
-          </label>
-          <input
-            id="chat-input"
-            type="text"
-            autoComplete="off"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder={
-              searching
-                ? "Type a follow-up — it will queue"
-                : result && q
-                  ? `Filter flights to ${q.to.code}: direct, times, airlines, price...`
-                  : "Ask anything about your trip"
-            }
-          />
-          {speech.supported && (
-            <button className="mic" type="button" aria-label="Record a message" aria-pressed={speech.listening} onClick={speech.toggle}>
-              <MicIcon />
-            </button>
-          )}
-          <button className="go" type="submit" aria-label="Send">
-            <ArrowRightIcon />
-          </button>
-        </div>
-      </form>
+      </div>
 
       {details && q && (
         <div className="sheet-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setDetails(null)}>
@@ -482,7 +506,7 @@ export function ChatClient({ id }: { id: string }) {
               <li>{details.refundable ? "Refunds allowed" : "Refunds not allowed"}</li>
             </ul>
             <p className="policy">
-              The airline&apos;s policy applies if you cancel or change. mylz takes only its stated fee; the fare is charged by {details.airline}.
+              The airline&apos;s conditions apply to changes and cancellations. The displayed fare is an example.
             </p>
             <div className="details-foot">
               <div>
@@ -508,29 +532,12 @@ export function ChatClient({ id }: { id: string }) {
               <CloseIcon size={18} />
             </button>
             <h2 id="login-title">Don&apos;t lose your trip</h2>
-            <p>{login === "book" ? "Log in to book faster, or carry on without an account." : "Log in to save your trip details."}</p>
-            {/* Connect these to your real sign-in providers. In the demo they only close the dialog. */}
-            <button type="button" className="btn-outline" onClick={() => setLogin(null)}>
-              Continue with Google
-            </button>
-            <button type="button" className="btn-outline" onClick={() => setLogin(null)}>
-              Continue with Facebook
-            </button>
-            <span className="or">OR</span>
-            <p>
-              Log in with{" "}
-              <button type="button" className="link-btn" onClick={() => setLogin(null)}>
-                email
-              </button>{" "}
-              or{" "}
-              <button type="button" className="link-btn" onClick={() => setLogin(null)}>
-                sign up
-              </button>
-            </p>
+            <p>{login === "book" ? "Sign in on live Mylz to continue toward booking." : "Sign in on live Mylz to keep your trip details handy."}</p>
+            <a className="btn-outline" href="https://gomylz.com/">Open live Mylz to sign in</a>
             <button type="button" className="btn-dark sm guest" onClick={continueAsGuest}>
               Continue as guest
             </button>
-            <small>Demo: sign-in is not connected.</small>
+            <small>Preview search uses sample inventory.</small>
           </div>
         </div>
       )}

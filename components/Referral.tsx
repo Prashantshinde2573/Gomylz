@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-/** "Invite a friend": copy link and WhatsApp share. Set the reward text once it is decided. */
+/** "Invite a friend": copy link and WhatsApp share. */
 export function Referral() {
   const [copied, setCopied] = useState(false);
   // Same value on the server and on first render; the real origin is filled in after load.
@@ -25,7 +25,7 @@ export function Referral() {
       <div>
         <strong>Invite a friend</strong>
         <p>
-          <mark>[REWARD: e.g. give £10, get £10]</mark> when they book their first trip.
+          Know someone planning a trip? Share mylz with them.
         </p>
       </div>
       <div className="referral-actions">

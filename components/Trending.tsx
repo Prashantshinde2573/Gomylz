@@ -1,18 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cityForPlace } from "@/lib/airports";
 import { DESTINATION_PHOTOS } from "@/lib/assets";
 import { fmtShort, toISO } from "@/lib/dates";
 import { type Idea, trendingTrips } from "@/lib/demo";
 import { useCurrency } from "./CurrencyProvider";
-import { ArrowUpRightIcon } from "./Icons";
+import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "./Icons";
 
 /** Priced trips from the visitor's home city. Each card opens a chat with the sentence already written. */
 export function Trending({ initial }: { initial: Idea[] }) {
   const { format, home } = useCurrency();
   const [trips, setTrips] = useState(initial);
+  const rail = useRef<HTMLDivElement>(null);
+
+  function moveRail(direction: number) {
+    const element = rail.current;
+    if (element) element.scrollBy({ left: direction * element.clientWidth });
+  }
 
   // Re-price from the visitor's own city once their currency is known.
   useEffect(() => {
@@ -25,13 +31,17 @@ export function Trending({ initial }: { initial: Idea[] }) {
     <section className="dest" id="trending" aria-labelledby="dest-title">
       <div className="dest-head">
         <span className="eyebrow">Trending from {city}</span>
-        <h2 id="dest-title">Start with a place. mylz does the rest.</h2>
+        <h2 id="dest-title">See where you could go.</h2>
       </div>
-      <div className="dest-grid">
+      <div className="dest-controls">
+        <button type="button" aria-label="Previous destinations" onClick={() => moveRail(-1)}><ArrowLeftIcon size={18} /></button>
+        <button type="button" aria-label="Next destinations" onClick={() => moveRail(1)}><ArrowRightIcon size={18} /></button>
+      </div>
+      <div className="dest-grid" ref={rail}>
         {trips.map((t, i) => (
           <Link key={t.code} className={`dest-card tone-${i % 3}`} href={`/chat?q=${encodeURIComponent(t.prompt)}`} prefetch={false}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {DESTINATION_PHOTOS[t.code] && <img src={DESTINATION_PHOTOS[t.code]} alt="" loading="lazy" />}
+            {DESTINATION_PHOTOS[t.code] && <img src={DESTINATION_PHOTOS[t.code]} alt="" loading="lazy" onError={(event) => { event.currentTarget.hidden = true; }} />}
             <span className="dest-code" aria-hidden="true">
               {t.code}
             </span>
@@ -55,7 +65,7 @@ export function Trending({ initial }: { initial: Idea[] }) {
           </Link>
         ))}
       </div>
-      <small className="dest-note">Example fares for one adult, for illustration.</small>
+      <small className="dest-note">Sample return fares for one adult.</small>
     </section>
   );
 }

@@ -1,245 +1,188 @@
+import Link from "next/link";
 import { DemoShowcase } from "@/components/DemoShowcase";
 import { HeroMedia } from "@/components/HeroMedia";
-import { HowItWorks } from "@/components/HowItWorks";
-import { StarIcon } from "@/components/Icons";
+import { Nav } from "@/components/Nav";
+import {
+  ArrowUpRightIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon, FlyIcon,
+  GlobeIcon, MicIcon, PlaneIcon, SearchIcon, SparkleIcon, TicketIcon,
+} from "@/components/Icons";
 import { PromptForm } from "@/components/PromptForm";
 import { Referral } from "@/components/Referral";
-import { RouteMap } from "@/components/RouteMap";
 import { SearchPanel } from "@/components/SearchPanel";
 import { Trending } from "@/components/Trending";
 import { BACKERS } from "@/lib/assets";
 import { toISO } from "@/lib/dates";
 import { trendingTrips } from "@/lib/demo";
-import { FAQS, isPlaceholder } from "@/lib/faq";
+import { FAQS } from "@/lib/faq";
 
-// Trending fares are recalculated hourly.
 export const revalidate = 3600;
 
-const COMPARE: Array<[string, string, string]> = [
-  ["Searching", "One sentence, typed or spoken", "Filters, forms and tabs"],
-  ["Your preferences", "Remembered for next time", "Entered again each trip"],
-  ["When something goes wrong", "A real person within 2 hours", "Varies by site"],
-  ["Fees", "Shown upfront, before you pay", "Can appear at checkout"],
-  ["Your booking", "Made in the supplier's own inventory", "Varies by site"],
+const STAYS = [
+  { title: "A resort by the water", prompt: "A resort stay in Bali for 7 nights", photo: "1571896349842-33c89424de2d", fallback: "how-3.jpg" },
+  { title: "A boutique city stay", prompt: "A boutique hotel in Lisbon for 3 nights", photo: "1611892440504-42a792e24d32", fallback: "how-1.jpg" },
+  { title: "A weekend hideaway", prompt: "A hotel in Rome for a long weekend", photo: "1566073771259-6a8506099945", fallback: "how-3.jpg" },
+  { title: "A room with a view", prompt: "A hotel in Dubai for 4 nights", photo: "1542314831-068cd1dbfeeb", fallback: "how-2.jpg" },
+];
+
+const WORKFLOW = [
+  { Icon: MicIcon, title: "Describe the trip", copy: "Type it or say it out loud. Add a route, dates, a budget, or whatever matters most." },
+  { Icon: CompareIcon, title: "Compare as Mylz searches", copy: "Keep the conversation beside your flight and stay options. You can queue a follow-up while the search runs." },
+  { Icon: TicketIcon, title: "Pick the option that fits", copy: "Open fare details before choosing. On live Mylz, sign in to keep your trip details handy." },
+];
+
+const FEATURES = [
+  { Icon: SparkleIcon, title: "Search in your own words", copy: "Start with an idea or give Mylz the details you already know." },
+  { Icon: CalendarIcon, title: "Use the search form", copy: "Choose airports or a hotel destination, dates, and the people travelling." },
+  { Icon: CompareIcon, title: "Keep comparing in chat", copy: "Review options beside the conversation and narrow down the choices." },
+  { Icon: GlobeIcon, title: "Search across suppliers", copy: "Mylz brings airline and accommodation options into the same workspace." },
+  { Icon: TicketIcon, title: "IATA TIDS registered", copy: "Mylz is listed as a travel sales intermediary and tickets through licensed partners." },
+  { Icon: ChatIcon, title: "Speak to the Mylz team", copy: "Contact Mylz for help with changes, cancellations, and travel disruptions." },
+];
+
+const BOOKING = [
+  { Icon: PlaneIcon, title: "The travel price", copy: "Fares and room rates depend on the option you choose and the supplier’s availability." },
+  { Icon: TicketIcon, title: "Any Mylz service fee", copy: "A Mylz service fee may apply. Check the total and terms before confirming." },
+  { Icon: SearchIcon, title: "The supplier’s rules", copy: "Changes, cancellations, and refunds are subject to the travel provider’s conditions." },
+];
+
+const SAMPLE_REVIEWS = [
+  "I put the dates and budget in one message. That gave me somewhere to start for our Lisbon weekend.",
+  "I wanted a later departure. It was easy to ask for that while looking at the options.",
+  "I already knew the dates, so I used the hotel search and went straight to comparing stays.",
 ];
 
 export default function HomePage() {
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.filter((f) => !isPlaceholder(f.a)).map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   return (
-    <main>
-      {/* 1. Hero */}
+    <main className="travel-home">
       <section className="hero">
         <HeroMedia />
+        <Nav />
         <div className="hero-inner">
-        <div className="hero-grid">
-          <div className="hero-head">
-            <span className="hero-pill">Talk. Book. Go.</span>
-            <h1>
-              <span>Book Flights &amp; Stays</span> <span>
-                Just by <em>Talking</em>
-              </span>
-            </h1>
-            <p className="hero-sub">
-              Tell mylz your trip in one sentence. It finds and books your flights and stay — with a real person if
-              anything goes wrong.
-            </p>
-          </div>
-          <div className="hero-proof">
-          <ul className="hero-tags" aria-label="mylz in numbers">
-            <li>
-              <svg viewBox="0 0 18 56" aria-hidden="true">
-                <path d="M18 0.5 L1 28 L18 55.5" />
-              </svg>
-              <span>380+ Major Airlines</span>
-            </li>
-            <li>
-              <svg viewBox="0 0 18 56" aria-hidden="true">
-                <path d="M18 0.5 L1 28 L18 55.5" />
-              </svg>
-              <span>1M+ Stays Worldwide</span>
-            </li>
-            <li>
-              <svg viewBox="0 0 18 56" aria-hidden="true">
-                <path d="M18 0.5 L1 28 L18 55.5" />
-              </svg>
-              <span>IATA Accredited Agent</span>
-            </li>
-          </ul>
-          </div>
-        </div>
-        <SearchPanel />
-        </div>
-      </section>
-
-      {/* 2. Trusted by: rating and accreditation logos */}
-      <section className="trust" aria-labelledby="trust-title">
-        <div className="trust-rating">
-          <h2 id="trust-title" className="trust-title">
-            Trusted &amp; accredited
-          </h2>
-          {/* DUMMY rating for the demo. Replace with the real Trustpilot score and review count before launch. */}
-          <div className="trust-score">
-            <span className="trust-badge">4.8</span>
-            <div>
-              <span className="stars" aria-label="Rated 4.8 out of 5">
-                <StarIcon /> <StarIcon /> <StarIcon /> <StarIcon /> <StarIcon />
-              </span>
-              <p>1,200+ reviews on Trustpilot</p>
+          <div className="hero-grid">
+            <div className="hero-head">
+              <span className="hero-pill">Talk. Book. Go.</span>
+              <h1><span>Plan your next trip</span><span>in one <em>conversation.</em></span></h1>
+              <p className="hero-sub">Tell mylz where you want to go. Search flights and stays by typing, speaking, or using the search form.</p>
             </div>
           </div>
+          <SearchPanel />
         </div>
-        <ul className="trust-logos" aria-label="Accredited and backed by">
-          {BACKERS.map((b) => (
-            <li key={b.name}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={b.src} alt={b.name} style={{ height: b.height }} loading="lazy" />
-            </li>
+      </section>
+
+      <ul className="coverage" aria-label="Mylz travel coverage">
+        <li><span className="coverage-icon"><PlaneIcon size={25} /></span><div><strong>380+</strong><span>Major airlines</span></div></li>
+        <li><span className="coverage-icon"><BedIcon size={25} /></span><div><strong>1M+</strong><span>Stays</span></div></li>
+        <li><span className="coverage-icon"><TicketIcon size={25} /></span><div><strong>IATA</strong><span>TIDS 96192412</span></div></li>
+      </ul>
+
+      <section className="stay-edit" id="stays" aria-labelledby="stay-title">
+        <div className="section-intro">
+          <h2 id="stay-title">Find your kind of stay.</h2>
+          <p>A beachfront escape, a city weekend, or somewhere with a view. Pick a starting point and make the search your own.</p>
+        </div>
+        <div className="stay-grid">
+          {STAYS.map(({ title, prompt, photo, fallback }) => (
+            <Link
+              className="stay-tile"
+              href={`/chat?q=${encodeURIComponent(prompt)}`}
+              key={title}
+              prefetch={false}
+              style={{backgroundImage: `linear-gradient(0deg, #b4d8e5 0%, #a5cad750 26%, transparent 57%), url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}}
+            >
+              <span>{title}</span><span className="round-arrow"><ArrowUpRightIcon size={17} /></span>
+            </Link>
           ))}
-        </ul>
+        </div>
+        <div className="stay-end"><Link className="btn-outline sm" href="/#trending">Explore destinations <ArrowUpRightIcon size={15} /></Link></div>
       </section>
 
-      {/* 3. See it in action */}
-      <section className="action" id="demo">
-        <div className="action-copy">
-          <span className="eyebrow">See it in action</span>
-          <h2>One sentence in. A booked trip out.</h2>
-          <p>
-            No filters and no ten open tabs. You say what you want, mylz comes back with priced options, and you
-            confirm the one you like.
-          </p>
+      <section className="walkthrough" id="demo" aria-labelledby="walkthrough-title">
+        <div className="walkthrough-copy">
+          <div className="section-intro">
+            <span className="eyebrow">Book with mylzAI</span>
+            <h2 id="walkthrough-title">From an idea to options you can compare.</h2>
+          </div>
+          <ol className="workflow-list">
+            {WORKFLOW.map(({ Icon, title, copy }) => (
+              <li key={title}><span className="feature-icon"><Icon size={20} /></span><div><h3>{title}</h3><p>{copy}</p></div></li>
+            ))}
+          </ol>
         </div>
-        <div className="demo-panel">
-          <div className="dots" aria-hidden="true" />
-          <DemoShowcase />
-        </div>
+        <DemoShowcase />
       </section>
 
-      {/* 4. How it works */}
-      <HowItWorks />
-
-      {/* 5. Trending trips */}
       <Trending initial={trendingTrips("LON", toISO(new Date()))} />
 
-      {/* 6. Reviews */}
-      <section className="reviews" aria-labelledby="reviews-title">
-        <div className="reviews-head">
-          <span className="eyebrow">Travellers on Trustpilot</span>
-          <h2 id="reviews-title">What people say after they book</h2>
+      <section className="feature-section" id="how" aria-labelledby="feature-title">
+        <div className="section-intro centered">
+          <h2 id="feature-title">Why plan with mylz?</h2>
+          <p>Search the way you like, see your options, and know where to turn if plans change.</p>
         </div>
-        {/* Paste three real Trustpilot reviews here. Do not publish with the placeholders. */}
+        <div className="feature-grid">
+          {FEATURES.map(({ Icon, title, copy }) => (
+            <article className="feature-card" key={title}>
+              <span className="feature-icon"><Icon size={20} /></span><h3>{title}</h3><p>{copy}</p>
+            </article>
+          ))}
+        </div>
+        <div className="partner-band">
+          <span>Accredited &amp; backed by</span>
+          <ul aria-label="Accreditation and backers">
+            {BACKERS.map((backer) => (
+              <li key={backer.name}><img src={backer.src} alt={backer.name} style={{height: backer.height}} loading="lazy" /></li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="booking-section" id="fee" aria-labelledby="booking-title">
+        <div className="section-intro centered">
+          <h2 id="booking-title">What to check before you book.</h2>
+          <p>Mylz connects you with travel suppliers. Review the price and conditions for the option you choose.</p>
+        </div>
+        <div className="booking-grid">
+          {BOOKING.map(({ Icon, title, copy }) => (
+            <article className="booking-card" key={title}>
+              <span className="feature-icon"><Icon size={20} /></span><h3>{title}</h3><p>{copy}</p>
+            </article>
+          ))}
+        </div>
+        <a className="booking-terms" href="https://gomylz.com/terms-and-conditions">Read the booking terms <ArrowUpRightIcon size={14} /></a>
+      </section>
+
+      <section className="reviews" aria-labelledby="reviews-title">
+        <div className="section-intro centered">
+          <h2 id="reviews-title">What travellers might say.</h2>
+          <p>Illustrative testimonials. Each quote is fictional.</p>
+        </div>
         <div className="review-grid">
-          {[1, 2, 3].map((n) => (
-            <figure key={n} className="review is-placeholder">
-              <blockquote>[PASTE TRUSTPILOT REVIEW {n}]</blockquote>
-              <figcaption>[First name] · [Route, travellers — e.g. London → Lisbon, 2 adults]</figcaption>
+          {SAMPLE_REVIEWS.map((quote) => (
+            <figure className="review" key={quote}>
+              <figcaption>Sample testimonial</figcaption><blockquote>“{quote}”</blockquote>
             </figure>
           ))}
         </div>
       </section>
 
-      {/* 7. What you pay */}
-      <section className="pay" id="fee" aria-labelledby="pay-title">
-        <div className="pay-copy">
-          <span className="eyebrow">What you pay</span>
-          <h2 id="pay-title">The supplier&apos;s price, plus one stated fee</h2>
-          <p>
-            mylz does not mark up fares or room rates. Your money for the trip goes to the airline or hotel. mylz adds
-            its own fee, and you see it before you pay.
-          </p>
-        </div>
-        <div className="pay-sum" role="group" aria-label="How the total is made up">
-          <div>
-            <small>Airline fare or hotel rate</small>
-            <strong>Paid to the supplier</strong>
-          </div>
-          <span aria-hidden="true">+</span>
-          <div className="is-placeholder">
-            <small>mylz fee</small>
-            <strong>[STATE FEE]</strong>
-          </div>
-          <span aria-hidden="true">=</span>
-          <div className="pay-total">
-            <small>Your total</small>
-            <strong>Nothing added at checkout</strong>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Gets to know you + comparison */}
-      <section className="know" aria-labelledby="know-title">
-        <div className="know-copy">
-          <span className="eyebrow">Gets to know you</span>
-          <h2 id="know-title">Every trip takes fewer words than the last</h2>
-          <ul>
-            <li>
-              <strong>Remembers.</strong> Your home airport, who you travel with and how you like to fly.
-            </li>
-            <li>
-              <strong>Saves.</strong> Trips you are still thinking about, ready when you come back.
-            </li>
-            <li>
-              <strong>Gets faster.</strong> The more you book, the less you have to explain.
-            </li>
-          </ul>
-          <RouteMap />
-        </div>
-        <div className="compare-wrap">
-          <table className="compare">
-            <caption className="sr-only">mylz compared with a typical booking site</caption>
-            <thead>
-              <tr>
-                <td />
-                <th scope="col">mylz</th>
-                <th scope="col">Typical booking site</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARE.map(([row, us, them]) => (
-                <tr key={row}>
-                  <th scope="row">{row}</th>
-                  <td>{us}</td>
-                  <td>{them}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* 9. FAQ */}
       <section className="faq" id="faq" aria-labelledby="faq-title">
-        <div className="faq-head">
-          <span className="eyebrow">Questions</span>
-          <h2 id="faq-title">Before you book</h2>
-        </div>
+        <div className="faq-head section-intro"><h2 id="faq-title">Frequently asked questions.</h2></div>
         <div className="faq-list">
-          {FAQS.map((f) => (
-            <details key={f.q}>
-              <summary>{f.q}</summary>
-              <p className={isPlaceholder(f.a) ? "is-placeholder" : undefined}>{f.a}</p>
+          {FAQS.map((item) => (
+            <details key={item.q}>
+              <summary>{item.q}</summary><p>{item.a} {item.href && <a href={item.href}>{item.linkLabel} <span aria-hidden="true">↗</span></a>}</p>
             </details>
           ))}
         </div>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       </section>
 
-      {/* 10. Final CTA + referral */}
-      <section className="cta" id="start">
-        <h2>
-          Where do you want to go <em>today?</em>
-        </h2>
-        <PromptForm variant="cta" />
-        <small>IATA accredited · A real person within 2 hours · Coming soon: experiences, trains, buses &amp; ferries</small>
-        <Referral />
+      <section className="cta" id="start" aria-labelledby="start-title">
+        <div className="cta-glass">
+          <FlyIcon size={24} />
+          <h2 id="start-title">Where to next?</h2>
+          <p>Start with a destination, a date, or an idea.</p>
+          <PromptForm variant="cta" />
+          <Referral />
+        </div>
       </section>
     </main>
   );
