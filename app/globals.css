@@ -655,10 +655,26 @@ mark {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background:
+  /* background:
     linear-gradient(to bottom, rgb(0 0 0 / 42%), transparent 28%),
     linear-gradient(to top, rgb(0 0 0 / 48%), transparent 50%),
-    #0000005c;
+    #0000005c; */
+  /* background: linear-gradient(180deg, rgba(6, 23, 42, .24), rgba(6, 23, 42, .35) 55%, #0b1729), linear-gradient(90deg, rgba(6, 23, 42, .14), transparent 50%, rgba(6, 23, 42, .16)); */
+  background:
+    linear-gradient(180deg,
+      rgba(6, 23, 42, 0.45) 0px,
+      rgba(6, 23, 42, 0.20) 200px,
+      transparent 350px),
+    linear-gradient(180deg,
+      rgba(6, 23, 42, .24),
+      rgba(6, 23, 42, .35) 55%,
+      #0b1729),
+    linear-gradient(90deg,
+      rgba(6, 23, 42, .14),
+      transparent 50%,
+      rgba(6, 23, 42, .16));
+
+
 }
 
 .hero-inner {
@@ -4336,11 +4352,30 @@ main h2 {
   }
 
   .hero-overlay {
-    background:
+    /* background:
       linear-gradient(to bottom, rgb(0 0 0 / 42%), transparent 28%),
       linear-gradient(to top, rgb(0 0 0 / 48%), transparent 50%),
-      #06101fa1;
+      #06101fa1; */
+    /* background: linear-gradient(180deg, rgba(6, 23, 42, .24), rgba(6, 23, 42, .35) 55%, #0b1729), linear-gradient(90deg, rgba(6, 23, 42, .14), transparent 50%, rgba(6, 23, 42, .16)); */
+
+    background:
+      linear-gradient(180deg,
+        rgba(6, 23, 42, 0.45) 0px,
+        rgba(6, 23, 42, 0.20) 200px,
+        transparent 350px),
+      linear-gradient(180deg,
+        rgba(6, 23, 42, .24),
+        rgba(6, 23, 42, .35) 55%,
+        #0b1729),
+      linear-gradient(90deg,
+        rgba(6, 23, 42, .14),
+        transparent 50%,
+        rgba(6, 23, 42, .16));
+
+
+
   }
+
 }
 
 @keyframes mobile-menu-slide {
