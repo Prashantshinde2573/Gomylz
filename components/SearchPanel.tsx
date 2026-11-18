@@ -8,7 +8,7 @@ import { buildSentence, CABINS, type Cabin, type TripQuery } from "@/lib/demo";
 import { createChat } from "@/lib/startChat";
 import { Calendar, type DateRange } from "./Calendar";
 import { useCurrency } from "./CurrencyProvider";
-import { BedIcon, CalendarIcon, FlyIcon, MinusIcon, PlusIcon, SwapIcon, UserIcon } from "./Icons";
+import { BedIcon, CalendarIcon, ChevronDownIcon, FlyIcon, MinusIcon, PlusIcon, SwapIcon, UserIcon } from "./Icons";
 import { PREFILL_EVENT, PromptForm } from "./PromptForm";
 
 type Mode = "ai" | "flights" | "stays";
@@ -139,6 +139,7 @@ export function SearchPanel() {
                   <option key={c}>{c}</option>
                 ))}
               </select>
+              <ChevronDownIcon />
             </label>
           </div>
         )}
