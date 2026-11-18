@@ -7,9 +7,9 @@ import { BedIcon, CheckIcon, FlyIcon, MicIcon, SparkleIcon } from "./Icons";
 
 const PROMPT = "A long weekend in Lisbon for two, flying from London. Flights and a hotel, please.";
 const STEPS = [
-  { title: "Describe your trip", copy: "Type it or say it out loud. Add a route, dates, a budget, or whatever matters most." },
-  { title: "Compare your options", copy: "Keep the conversation beside your flight and stay options. Narrow down the choices as you go." },
-  { title: "Pick the option that fits", copy: "Review the fare and stay details, then choose the combination that works for you." },
+  { title: "Describe your trip" },
+  { title: "Compare your options" },
+  { title: "Pick the option that fits" },
 ];
 
 export function BookingJourney() {
@@ -17,7 +17,6 @@ export function BookingJourney() {
   const id = useId();
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
-  const [playing, setPlaying] = useState(true);
   const [visible, setVisible] = useState(false);
   const [reduced, setReduced] = useState(true);
   const [focused, setFocused] = useState(false);
@@ -33,31 +32,29 @@ export function BookingJourney() {
   }, []);
 
   useEffect(() => {
-    if (!playing || !visible || reduced || focused) return;
+    if (!visible || reduced || focused) return;
     const timer = window.setInterval(() => {
       if (!document.hidden) setActive((current) => (current + 1) % STEPS.length);
     }, 6500);
     return () => window.clearInterval(timer);
-  }, [active, playing, visible, reduced, focused]);
+  }, [active, visible, reduced, focused]);
 
   function choose(index: number) {
     setActive(index);
-    setPlaying(false);
   }
 
   return (
     <section ref={root} className="booking-journey" id="demo" aria-labelledby="walkthrough-title">
       <header className="journey-heading">
         <div><span className="eyebrow">Book with mylzAI</span><h2 id="walkthrough-title">From an idea to options you can compare.</h2></div>
-        <div><p>One conversation. A trip that feels like you. Tell Mylz what you have in mind, explore your options, and find your fit.</p>
-          {!reduced && <button type="button" className="link-btn" aria-pressed={playing} onClick={() => setPlaying((current) => !current)}>{playing ? "Pause animation" : "Play animation"}</button>}
-        </div>
+        <p>Describe your trip, compare your options, and find your fit.</p>
       </header>
       <div className="journey-panels"
         onFocusCapture={() => setFocused(true)}
         onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
-        {STEPS.map(({ title, copy }, index) => (
+        {STEPS.map(({ title }, index) => (
           <div className="journey-panel" data-active={index === active} key={title}>
+            <img className="journey-background" src={`/images/journey/scenes/step-${index + 1}.webp`} alt="" loading="lazy" />
             <button type="button" className="journey-tab" id={`${id}-tab-${index}`} aria-expanded={index === active} aria-controls={`${id}-panel-${index}`}
               onClick={() => choose(index)}
               onKeyDown={(event) => {
@@ -74,9 +71,8 @@ export function BookingJourney() {
               <span className="journey-number">00{index + 1}</span><span className="journey-tab-label">{title}</span>
             </button>
             <div className="journey-content" role="region" id={`${id}-panel-${index}`} aria-labelledby={`${id}-tab-${index}`} aria-hidden={index !== active} inert={index !== active}>
-              <h3>{title}</h3><p>{copy}</p>
+              <h3>{title}</h3>
               <div className="journey-visual">
-                <img src={index === 0 ? "/images/journey/describe.webp" : index === 1 ? "/images/journey/compare.webp" : "/images/journey/choose.webp"} alt="" loading="lazy" />
                 <div className="journey-ui">
                   <div className="journey-ui-head"><SparkleIcon size={17} /><strong>mylzAI</strong><small>{["Your next adventure", "Your trip options", "Your shortlist"][index]}</small></div>
                   {index === 0 ? <>

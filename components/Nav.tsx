@@ -9,11 +9,8 @@ import { LOGO } from "@/lib/assets";
 import { AccountIcon, CloseIcon, FlyIcon, MenuIcon, PlusIcon } from "./Icons";
 
 const HOME_LINKS = [
-  ["Stays", "/#stays"],
-  ["How it works", "/#demo"],
   ["Why Mylz?", "/#how"],
   ["Trending", "/#trending"],
-  ["Booking", "/#fee"],
   ["FAQ", "/#faq"],
 ];
 
@@ -21,8 +18,7 @@ export function Nav() {
   const pathname = usePathname();
   const router = useRouter();
   const inChat = pathname === "/chat" || pathname.startsWith("/chat/");
-  const chatLinks = [["Home", "/"], ["Destinations", "/#trending"], ["Booking help", "/#faq"]];
-  const menuLinks = inChat ? chatLinks : [...HOME_LINKS, ["Plan my trip", "/#start"]];
+  const menuLinks = HOME_LINKS;
   const authDialog = useRef<HTMLDialogElement>(null);
   const mobileMenu = useRef<HTMLDialogElement>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -53,7 +49,6 @@ export function Nav() {
               {label}
             </Link>
           ))}
-          {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
         </nav>
       </details>
       <Link className="logo" href="/" aria-label="mylz home">
@@ -62,8 +57,7 @@ export function Nav() {
       </Link>
 
       <nav className="nav-links" aria-label="Main">
-        {(inChat ? chatLinks : HOME_LINKS).map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
-        {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
+        {HOME_LINKS.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
       </nav>
 
       <div className="nav-actions">
@@ -106,7 +100,6 @@ export function Nav() {
           {menuLinks.map(([label, href]) => (
             <Link key={href} href={href} onClick={() => mobileMenu.current?.close()}>{label}</Link>
           ))}
-          {pathname.startsWith("/chat/") && <span className="nav-current" aria-current="page">Trip chat</span>}
         </nav>
         <button type="button" className="mobile-menu-signin" onClick={() => {
           mobileMenu.current?.close();

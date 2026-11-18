@@ -3530,9 +3530,9 @@ main h2 {
 
 .hero-head h1 {
   margin-top: 15px;
-  font-size: clamp(38px, 5.3vw, 73px);
+  font-size: 80px;
   line-height: 1.02;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: -.062em;
 }
 
@@ -6492,4 +6492,272 @@ main h2 {
     inset: 24px 26px 22px 88px;
     overflow: hidden;
   }
+}
+
+@media (max-width: 760px) {
+  .hero-head h1 { font-size: clamp(42px, 10.5vw, 80px); }
+}
+
+.hero-trust-row {
+  --trust-gap: clamp(18px, 2.4vw, 36px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--trust-gap);
+  padding: clamp(32px, 4vw, 56px) var(--gutter);
+}
+.hero-trust-row .coverage {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  align-items: center;
+}
+.hero-trust-row .coverage li {
+  flex-direction: row;
+  justify-content: center;
+  gap: clamp(10px, 1.2vw, 18px);
+  padding-inline: 14px;
+  min-height: 60px;
+  text-align: start;
+}
+.hero-trust-row .coverage li:first-child { padding-inline-start: 0; justify-content: start; }
+.hero-trust-row .coverage li + li { border-inline-start: 1px solid var(--line); }
+.hero-trust-row .coverage-icon { width: clamp(44px, 4vw, 58px); height: clamp(44px, 4vw, 58px); border-radius: 16px; }
+.hero-trust-row .coverage strong { font-size: clamp(24px, 2.6vw, 36px); }
+.hero-trust-row .coverage li div { gap: 6px; }
+.hero-trust-row .coverage li div span { font-size: clamp(11px, 1.05vw, 14px); white-space: nowrap; }
+.hero-trust-row .partner-band {
+  margin: 0;
+  padding-inline-start: var(--trust-gap);
+  border-inline-start: 1px solid var(--line);
+  display: grid;
+  align-content: center;
+  justify-content: stretch;
+  gap: 16px;
+}
+.hero-trust-row .partner-band > span { text-align: start; font-size: 14px; }
+.hero-trust-row .partner-band ul {
+  display: grid;
+  grid-template-columns: .65fr 1.2fr 1.35fr 1fr;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+.hero-trust-row .partner-band li {
+  min-width: 0;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: clamp(10px, 1.2vw, 18px);
+  position: relative;
+}
+.hero-trust-row .partner-band li:first-child { padding-inline-start: 0; justify-content: start; }
+.hero-trust-row .partner-band li + li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  height: 28px;
+  transform: translateY(-50%);
+  border-inline-start: 1px solid var(--line);
+}
+.hero-trust-row .partner-band img { max-width: 100%; max-height: 44px; width: auto; object-fit: contain; }
+@media (max-width: 1100px) {
+  .hero-trust-row { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 28px; }
+  .hero-trust-row .coverage li:first-child { justify-content: center; padding-inline-start: 14px; }
+  .hero-trust-row .partner-band { padding: 22px 0 0; border-inline-start: 0; border-top: 1px solid var(--line); }
+  .hero-trust-row .partner-band > span { text-align: center; }
+  .hero-trust-row .partner-band ul { max-width: 650px; margin-inline: auto; }
+  .hero-trust-row .partner-band li:first-child { justify-content: center; padding-inline-start: 10px; }
+}
+@media (max-width: 640px) {
+  .hero-trust-row .coverage li, .hero-trust-row .coverage li:first-child { flex-direction: column; text-align: center; padding-inline: 8px; gap: 10px; }
+  .hero-trust-row .coverage li div { gap: 4px; }
+  .hero-trust-row .coverage-icon { width: 44px; height: 44px; }
+}
+@media (max-width: 400px) {
+  .hero-trust-row .partner-band ul { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 16px; }
+  .hero-trust-row .partner-band li:nth-child(3)::before { display: none; }
+  .hero-trust-row .partner-band li { padding-inline: 14px; }
+}
+
+/* Six varied feature cards beneath the centered section introduction. */
+.feature-bento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(250px, auto));
+  gap: 14px;
+}
+.feature-bento-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--navy);
+  color: white;
+}
+.feature-bento-card > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.feature-bento-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgb(3 12 20 / 82%), rgb(3 12 20 / 28%) 64%, transparent);
+}
+.feature-bento-voice { grid-area: 1 / 1; }
+.feature-bento-chat { grid-area: 1 / 2; }
+.feature-bento-calendar { grid-area: 1 / 3 / 3 / 4; }
+.feature-bento-suppliers { grid-area: 2 / 1 / 3 / 3; }
+.feature-bento-ticket { grid-area: 3 / 1; }
+.feature-bento-support { grid-area: 3 / 2 / 4 / 4; }
+.feature-bento-copy { padding: 25px; position: relative; }
+.feature-bento-icon { display: grid; place-items: center; width: 49px; height: 49px; border-radius: 15px; background: rgb(255 255 255 / 9%); margin-bottom: 14px; }
+.feature-bento-card h3 { max-width: 12ch; font-size: clamp(23px, 2.1vw, 30px); line-height: 1.12; font-weight: 650; letter-spacing: -.035em; }
+.feature-bento-card p { max-width: 23ch; font-size: 13px; line-height: 1.5; margin-top: 12px; color: var(--mist); }
+.feature-bento-calendar > img { object-position: 65% center; }
+.feature-bento-calendar::before { background: linear-gradient(180deg, rgb(3 12 20 / 85%), rgb(3 12 20 / 20%) 75%); }
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .feature-bento-card > img { transition: transform .5s ease; }
+  .feature-bento-card:hover > img { transform: scale(1.035); }
+}
+@media (max-width: 950px) {
+  .feature-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; }
+  .feature-bento > * { grid-area: auto; min-height: 300px; }
+  .feature-bento-card h3 { font-size: 26px; }
+}
+@media (max-width: 580px) {
+  .feature-bento { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .feature-bento > * { border-radius: 20px; }
+}
+
+/* Isolated subjects stay inside their image area at every card aspect ratio. */
+.feature-bento-card > img {
+  inset: auto 14px 16px auto;
+  width: 43%;
+  height: calc(100% - 32px);
+  object-fit: contain;
+  object-position: right bottom;
+  transform-origin: right bottom;
+}
+.feature-bento-voice > img { width: 39%; }
+.feature-bento-chat > img { width: 39%; }
+.feature-bento-calendar > img { right: 16px; bottom: 20px; width: calc(100% - 32px); height: 51%; object-position: center bottom; }
+.feature-bento-suppliers > img { width: 53%; height: 84%; }
+.feature-bento-ticket > img { width: 44%; height: 60%; }
+.feature-bento-support > img { width: 48%; height: 88%; }
+@media (max-width: 950px) {
+  .feature-bento-card > img { right: 12px; bottom: 14px; width: 42%; height: 66%; }
+  .feature-bento-calendar > img { width: 45%; height: 65%; object-position: right bottom; }
+  .feature-bento-voice > img, .feature-bento-chat > img { width: 37%; height: 80%; }
+  .feature-bento-suppliers > img { height: 60%; }
+}
+@media (max-width: 580px) {
+  .feature-bento-card > img { right: 16px; bottom: 16px; }
+  .feature-bento-support > img { width: 41%; }
+}
+
+/* Staggered 40/60 column splits follow the six-card reference. */
+.feature-bento {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  height: clamp(780px, 70vw, 1100px);
+  gap: clamp(12px, 1.2vw, 20px);
+}
+.feature-bento-voice { grid-area: 1 / 1 / 3 / 2; }
+.feature-bento-suppliers { grid-area: 3 / 1 / 6 / 2; }
+.feature-bento-calendar { grid-area: 1 / 2 / 4 / 3; }
+.feature-bento-ticket { grid-area: 4 / 2 / 6 / 3; }
+.feature-bento-chat { grid-area: 1 / 3 / 3 / 4; }
+.feature-bento-support { grid-area: 3 / 3 / 6 / 4; }
+.feature-bento-copy {
+  padding: clamp(22px, 2.2vw, 34px) 20px 0;
+  text-align: center;
+}
+.feature-bento-icon { width: 38px; height: 38px; border-radius: 12px; margin: 0 auto 12px; }
+.feature-bento-icon svg { width: 21px; height: 21px; }
+.feature-bento-card h3 { max-width: 18ch; margin: 0 auto; font-size: clamp(23px, 2.2vw, 32px); line-height: 1.12; }
+.feature-bento-card > img {
+  inset: auto 20px 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 164px);
+  object-fit: contain;
+  object-position: center;
+  transform-origin: center;
+}
+.feature-bento-card::before { background: linear-gradient(180deg, rgb(3 12 20 / 24%), transparent 60%); }
+@media (max-width: 950px) and (min-width: 581px) {
+  .feature-bento { height: 1240px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(8, minmax(0, 1fr)); }
+  .feature-bento > * { min-height: 0; }
+  .feature-bento-voice { grid-area: 1 / 1 / 3 / 2; }
+  .feature-bento-calendar { grid-area: 1 / 2 / 4 / 3; }
+  .feature-bento-chat { grid-area: 3 / 1 / 6 / 2; }
+  .feature-bento-suppliers { grid-area: 4 / 2 / 6 / 3; }
+  .feature-bento-ticket { grid-area: 6 / 1 / 9 / 2; }
+  .feature-bento-support { grid-area: 6 / 2 / 9 / 3; }
+}
+@media (max-width: 580px) {
+  .feature-bento { height: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .feature-bento > * { grid-area: auto; min-height: 340px; }
+  .feature-bento-calendar, .feature-bento-suppliers, .feature-bento-support { min-height: 430px; }
+}
+
+/* Editorial travel photography fills the existing staggered cards. */
+.feature-bento-card > img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 64%;
+}
+.feature-bento-card::before {
+  background: linear-gradient(180deg, rgb(3 12 20 / 64%) 0%, rgb(3 12 20 / 25%) 25%, transparent 48%);
+}
+.feature-bento-calendar > img { object-position: 62% center; }
+.feature-bento-chat > img { object-position: center 66%; }
+.feature-bento-support > img { object-position: 62% center; }
+.feature-bento-copy { padding-top: clamp(26px, 2.8vw, 40px); }
+@media (max-width: 580px) {
+  .feature-bento-card h3 { max-width: 19ch; }
+  .feature-bento-copy { padding-top: 28px; }
+}
+
+/* Immersive imagery spans each journey panel behind its white product UI. */
+.journey-panel { isolation: isolate; }
+.journey-background {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 35% center;
+}
+.journey-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(3 15 28 / 64%), rgb(3 15 28 / 10%) 65%);
+}
+.journey-tab, .journey-panel[data-active="true"] .journey-tab { color: white; }
+.journey-panel[data-active="true"] .journey-number { color: var(--navy); }
+.journey-content h3 { color: white; text-shadow: 0 2px 12px rgb(0 0 0 / 25%); }
+.journey-visual { margin-top: 22px; padding: 0; overflow: visible; border-radius: 0; background: transparent; }
+.journey-visual::before { display: none; }
+.journey-ui { background: var(--white); }
+@media (max-width: 760px) {
+  .journey-panel { background: var(--navy); }
+  .journey-visual { margin-top: 18px; min-height: 235px; }
+  .journey-background { object-position: 30% center; }
 }

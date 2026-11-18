@@ -3,8 +3,7 @@ import { BookingJourney } from "@/components/BookingJourney";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Nav } from "@/components/Nav";
 import {
-  FlyIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon,
-  GlobeIcon, MicIcon, PlaneIcon, PlusIcon, SparkleIcon, TicketIcon,
+  FlyIcon, BedIcon, PlaneIcon, PlusIcon, TicketIcon,
 } from "@/components/Icons";
 import { SectionMotion } from "@/components/SectionMotion";
 import { SearchPanel } from "@/components/SearchPanel";
@@ -24,12 +23,12 @@ const STAYS = [
 ];
 
 const FEATURES = [
-  { Icon: SparkleIcon, title: "Search in your own words", copy: "Start with an idea or give Mylz the details you already know." },
-  { Icon: CalendarIcon, title: "Use the search form", copy: "Choose airports or a hotel destination, dates, and the people travelling." },
-  { Icon: CompareIcon, title: "Keep comparing in chat", copy: "Review options beside the conversation and narrow down the choices." },
-  { Icon: GlobeIcon, title: "Search across suppliers", copy: "Mylz brings airline and accommodation options into the same workspace." },
-  { Icon: TicketIcon, title: "IATA TIDS registered", copy: "Mylz is listed as a travel sales intermediary and tickets through licensed partners." },
-  { Icon: ChatIcon, title: "Speak to the Mylz team", copy: "Contact Mylz for help with changes, cancellations, and travel disruptions." },
+  { image: "voice", title: "Search in your own words", copy: "Start with an idea or give Mylz the details you already know." },
+  { image: "calendar", title: "Use the search form", copy: "Choose airports or a hotel destination, dates, and the people travelling." },
+  { image: "chat", title: "Keep comparing in chat", copy: "Review options beside the conversation and narrow down the choices." },
+  { image: "suppliers", title: "Search across suppliers", copy: "Mylz brings airline and accommodation options into the same workspace." },
+  { image: "ticket", title: "IATA TIDS registered", copy: "Mylz is listed as a travel sales intermediary and tickets through licensed partners." },
+  { image: "support", title: "Speak to the Mylz team", copy: "Contact Mylz for help with changes, cancellations, and travel disruptions." },
 ];
 
 const BOOKING = [
@@ -39,7 +38,7 @@ const BOOKING = [
 ];
 
 const SAMPLE_REVIEWS = [
-  { name: "Maya Shah", role: "Product designer", rating: "4.8", photo: "maya-shah", quote: "I put our dates and budget in one message and had a shortlist for Lisbon in minutes. It was easy to compare the options before deciding." },
+  { name: "Emily Carter", role: "Product designer · Seattle, US", rating: "4.8", photo: "emily-carter", quote: "I put our dates and budget in one message and had a shortlist for Lisbon in minutes. It was easy to compare the options before deciding." },
   { name: "Daniel Brooks", role: "Operations manager", rating: "4.9", photo: "daniel-brooks", quote: "I needed a later departure and a hotel near the station. I could ask for both in the same conversation and narrow down the trip from there." },
   { name: "Sofia Martin", role: "Marketing consultant", rating: "4.7", photo: "sofia-martin", quote: "I had a few days free and no destination in mind. I compared a couple of city breaks and found one that worked with my dates." },
 ];
@@ -55,7 +54,6 @@ export default function HomePage() {
         <div className="hero-inner">
           <div className="hero-grid">
             <div className="hero-head">
-              <span className="hero-pill">Talk. Book. Go.</span>
               <h1>Let's Plan and <em>Go</em></h1>
               <p className="hero-sub">Find flights and stays in one conversation.</p>
             </div>
@@ -64,11 +62,21 @@ export default function HomePage() {
         </div>
       </section>
 
+      <div className="hero-trust-row">
       <ul className="coverage" aria-label="Mylz travel coverage">
         <li><span className="coverage-icon"><PlaneIcon size={25} /></span><div><strong>380+</strong><span>Major airlines</span></div></li>
         <li><span className="coverage-icon"><BedIcon size={25} /></span><div><strong>1M+</strong><span>Stays</span></div></li>
         <li><span className="coverage-icon"><TicketIcon size={25} /></span><div><strong>IATA</strong><span>TIDS 96192412</span></div></li>
       </ul>
+        <div className="partner-band">
+          <span>Accredited &amp; backed by</span>
+          <ul aria-label="Accreditation and backers">
+            {BACKERS.map((backer) => (
+              <li key={backer.name}><img src={backer.src} alt={backer.name} style={{height: backer.height}} loading="lazy" /></li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       <section className="stay-edit" id="stays" aria-labelledby="stay-title">
         <div className="stay-heading">
@@ -101,20 +109,15 @@ export default function HomePage() {
           <h2 id="feature-title">Why plan with mylz?</h2>
           <p>Search the way you like, see your options, and know where to turn if plans change.</p>
         </div>
-        <div className="feature-grid">
-          {FEATURES.map(({ Icon, title, copy }) => (
-            <article className="feature-card" key={title}>
-              <span className="feature-icon"><Icon size={20} /></span><h3>{title}</h3><p>{copy}</p>
+        <div className="feature-bento">
+          {FEATURES.map(({ image, title }) => (
+            <article className={`feature-bento-card feature-bento-${image}`} key={title}>
+              <img src={`/images/why/photos/${image}.webp`} alt="" loading="lazy" />
+              <div className="feature-bento-copy">
+                <h3>{title}</h3>
+              </div>
             </article>
           ))}
-        </div>
-        <div className="partner-band">
-          <span>Accredited &amp; backed by</span>
-          <ul aria-label="Accreditation and backers">
-            {BACKERS.map((backer) => (
-              <li key={backer.name}><img src={backer.src} alt={backer.name} style={{height: backer.height}} loading="lazy" /></li>
-            ))}
-          </ul>
         </div>
       </section>
 

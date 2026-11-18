@@ -8,6 +8,7 @@ const revealTargets = [
   ".travel-home .workflow-list > li",
   ".travel-home .dest-head",
   ".travel-home .feature-card",
+  ".travel-home .feature-bento > *",
   ".travel-home .booking-card",
   ".travel-home .review",
   ".travel-home .partner-band",
