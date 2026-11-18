@@ -33,5 +33,34 @@ export function SectionMotion() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const cards = Array.from(document.querySelectorAll<HTMLElement>(".stay-tile"));
+    let frame = 0;
+    function update() {
+      frame = 0;
+      cards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        const progress = (window.innerHeight / 2 - rect.top - rect.height / 2) / window.innerHeight;
+        const offset = Math.max(-28, Math.min(28, progress * 56)) * (index % 2 === 0 ? -1 : 1);
+        card.style.setProperty("--stay-offset", `${offset}px`);
+      });
+    }
+    function schedule() {
+      if (!motion.matches && !frame) frame = requestAnimationFrame(update);
+    }
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    motion.addEventListener("change", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      motion.removeEventListener("change", schedule);
+    };
+  }, []);
+
   return null;
 }

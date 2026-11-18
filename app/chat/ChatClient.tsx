@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCurrency } from "@/components/CurrencyProvider";
-import { ArrowRightIcon, BagIcon, BedIcon, CalendarIcon, GridIcon, SparkleIcon, CalendarXIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
+import { BagIcon, BedIcon, CalendarIcon, GridIcon, SparkleIcon, CalendarXIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, FlyIcon, MicIcon, SuitcaseIcon, SwapIcon } from "@/components/Icons";
 import { useSpeech } from "@/components/useSpeech";
 import { DESTINATION_PHOTOS, HERO_POSTER } from "@/lib/assets";
 import { cityForPlace } from "@/lib/airports";
@@ -271,7 +271,7 @@ export function ChatClient({ id }: { id: string }) {
                           <div className="idea-action">
                             <span><b>{format(idea.fromGBP)}</b> return</span>
                             <button type="button" className="btn-accent sm" onClick={() => send(idea.prompt)}>
-                              Plan this <ArrowRightIcon size={14} />
+                              Plan this <FlyIcon />
                             </button>
                           </div>
                         </div>
@@ -281,7 +281,7 @@ export function ChatClient({ id }: { id: string }) {
                 </div>
               ) : m.toResults ? (
                 <button key={m.id} type="button" className="bubble ai as-link" onClick={() => setTab("results")}>
-                  {m.text} <ArrowRightIcon size={14} />
+                  {m.text} <FlyIcon />
                 </button>
               ) : (
                 <div key={m.id} className="bubble ai">
@@ -351,7 +351,7 @@ export function ChatClient({ id }: { id: string }) {
                 </button>
               )}
               <button className="go" type="submit" aria-label="Send">
-                <ArrowRightIcon />
+                <FlyIcon />
               </button>
             </div>
           </form>

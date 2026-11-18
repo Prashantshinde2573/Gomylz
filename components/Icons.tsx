@@ -53,9 +53,9 @@ export const ChevronDownIcon = outline(ChevronDown, 14);
 export const PlayIcon = outline(Play, 18);
 export const StopIcon = outline(Square, 16);
 
-export function FlyIcon() {
+export function FlyIcon({ direction = "right" }: { direction?: "right" | "left" } = {}) {
   return (
-    <svg className="fly" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <svg className={`fly${direction === "left" ? " fly-left" : ""}`} aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
       <path d="M22 12c0 1-1.2 1.7-2.5 1.7h-4.7L9.6 22H7.2l2.6-8.3H5.6l-2 2.4H1.8L3 12 1.8 7.9h1.8l2 2.4h4.2L7.2 2h2.4l5.2 8.3h4.7c1.3 0 2.5.7 2.5 1.7Z" />
     </svg>
   );

@@ -5,7 +5,7 @@ import { type PlaceRef, searchPlaces } from "@/lib/airports";
 import { toISO } from "@/lib/dates";
 import { CABINS, type Cabin, type TripQuery } from "@/lib/demo";
 import { Calendar, type DateRange } from "./Calendar";
-import { ArrowLeftIcon, BedIcon, FlyIcon } from "./Icons";
+import { BedIcon, FlyIcon } from "./Icons";
 
 type Step = "from" | "to" | "dates" | "pax";
 
@@ -94,7 +94,7 @@ export function Wizard({ mode, tripType, onClose, onDone }: Props) {
       <div className="sheet" role="dialog" aria-modal="true" aria-label={mode === "flight" ? "Search flights" : "Search hotels"}>
         <div className="sheet-head">
           <button type="button" className="sheet-back" aria-label="Back" onClick={back}>
-            <ArrowLeftIcon size={18} />
+            <FlyIcon direction="left" />
           </button>
           {placeStep ? (
             <input

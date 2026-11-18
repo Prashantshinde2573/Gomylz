@@ -1,4 +1,4 @@
-import { ArrowRightIcon, CheckIcon, FlyIcon, MicIcon } from "./Icons";
+import { CheckIcon, FlyIcon, MicIcon } from "./Icons";
 
 // Card photos from Unsplash (free licence), loaded from Unsplash's CDN. The video frames in
 // /public/images/how sit underneath as a fallback if the CDN is unreachable.
@@ -114,7 +114,7 @@ export function HowItWorks() {
                 <strong className="is-from">LHR</strong>
               </div>
               <span className="hw-arrow">
-                <ArrowRightIcon size={18} />
+                <FlyIcon />
               </span>
               <div className="to">
                 <small>Lisbon</small>

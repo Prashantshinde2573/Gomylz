@@ -7,7 +7,7 @@ import { DESTINATION_PHOTOS } from "@/lib/assets";
 import { fmtShort, nightsBetween, toISO } from "@/lib/dates";
 import { type Idea, trendingTrips } from "@/lib/demo";
 import { useCurrency } from "./CurrencyProvider";
-import { ArrowLeftIcon, ArrowRightIcon } from "./Icons";
+import { FlyIcon } from "./Icons";
 
 /** Priced trips from the visitor's home city. Each card opens a chat with the sentence already written. */
 export function Trending({ initial }: { initial: Idea[] }) {
@@ -56,8 +56,8 @@ export function Trending({ initial }: { initial: Idea[] }) {
           ))}
         </div>
         <div className="dest-controls">
-          <button type="button" aria-label="Previous destinations" onClick={() => moveRail(-1)}><ArrowLeftIcon size={18} /></button>
-          <button type="button" aria-label="Next destinations" onClick={() => moveRail(1)}><ArrowRightIcon size={18} /></button>
+          <button type="button" aria-label="Previous destinations" onClick={() => moveRail(-1)}><FlyIcon direction="left" /></button>
+          <button type="button" aria-label="Next destinations" onClick={() => moveRail(1)}><FlyIcon /></button>
         </div>
       </div>
     </section>

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { DemoShowcase } from "@/components/DemoShowcase";
+import { BookingJourney } from "@/components/BookingJourney";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Nav } from "@/components/Nav";
 import {
-  ArrowUpRightIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon,
-  GlobeIcon, MicIcon, PlaneIcon, PlayIcon, PlusIcon, SparkleIcon, StarIcon, StopIcon, TicketIcon,
+  FlyIcon, BedIcon, CalendarIcon, ChatIcon, CompareIcon,
+  GlobeIcon, MicIcon, PlaneIcon, PlusIcon, SparkleIcon, TicketIcon,
 } from "@/components/Icons";
 import { SectionMotion } from "@/components/SectionMotion";
 import { SearchPanel } from "@/components/SearchPanel";
@@ -23,12 +23,6 @@ const STAYS = [
   { title: "A room with a view", prompt: "A hotel in Dubai for 4 nights", photo: "1542314831-068cd1dbfeeb", fallback: "how-2.jpg" },
 ];
 
-const WORKFLOW = [
-  { Icon: MicIcon, title: "Describe the trip", copy: "Type it or say it out loud. Add a route, dates, a budget, or whatever matters most." },
-  { Icon: CompareIcon, title: "Compare as Mylz searches", copy: "Keep the conversation beside your flight and stay options. You can queue a follow-up while the search runs." },
-  { Icon: TicketIcon, title: "Pick the option that fits", copy: "Open fare details before choosing. On live Mylz, sign in to keep your trip details handy." },
-];
-
 const FEATURES = [
   { Icon: SparkleIcon, title: "Search in your own words", copy: "Start with an idea or give Mylz the details you already know." },
   { Icon: CalendarIcon, title: "Use the search form", copy: "Choose airports or a hotel destination, dates, and the people travelling." },
@@ -39,15 +33,15 @@ const FEATURES = [
 ];
 
 const BOOKING = [
-  { tag: "Flights", title: "Compare the full fare", copy: "Check the route, baggage allowance, and any fees before you choose.", cta: "Search flights and stays", href: "#top", photo: "1539585383997-efd1a743120d" },
-  { tag: "Booking terms", title: "Know what can change", copy: "Review the supplier’s rules for changes, cancellations, and refunds.", cta: "Read booking terms", href: "https://gomylz.com/terms-and-conditions", photo: "1654163600133-452eb7274426" },
-  { tag: "Stays", title: "Find a stay that fits", copy: "Compare room rates, check-in times, and what’s included in your stay.", cta: "Explore stays", href: "#stays", photo: "1571896349842-33c89424de2d" },
+  { tag: "Flights", title: "Compare the full fare", copy: "Check the route, baggage allowance, and any fees before you choose.", cta: "Search flights and stays", href: "#top", image: "/images/booking/flights.webp" },
+  { tag: "Booking terms", title: "Know what can change", copy: "Review the supplier’s rules for changes, cancellations, and refunds.", cta: "Read booking terms", href: "https://gomylz.com/terms-and-conditions", image: "/images/booking/booking-terms.webp" },
+  { tag: "Stays", title: "Find a stay that fits", copy: "Compare room rates, check-in times, and what’s included in your stay.", cta: "Explore stays", href: "#stays", image: "/images/booking/stays.webp" },
 ];
 
 const SAMPLE_REVIEWS = [
-  { name: "Maya Shah", role: "Product designer", rating: "4.8", photo: "1580489944761-15a19d654956", quote: "I put our dates and budget in one message and had a shortlist for Lisbon in minutes. It was easy to compare the options before deciding." },
-  { name: "Daniel Brooks", role: "Operations manager", rating: "4.9", photo: "1500648767791-00dcc994a43e", quote: "I needed a later departure and a hotel near the station. I could ask for both in the same conversation and narrow down the trip from there." },
-  { name: "Sofia Martin", role: "Marketing consultant", rating: "4.7", photo: "1534528741775-53994a69da69", quote: "I had a few days free and no destination in mind. I compared a couple of city breaks and found one that worked with my dates." },
+  { name: "Maya Shah", role: "Product designer", rating: "4.8", photo: "maya-shah", quote: "I put our dates and budget in one message and had a shortlist for Lisbon in minutes. It was easy to compare the options before deciding." },
+  { name: "Daniel Brooks", role: "Operations manager", rating: "4.9", photo: "daniel-brooks", quote: "I needed a later departure and a hotel near the station. I could ask for both in the same conversation and narrow down the trip from there." },
+  { name: "Sofia Martin", role: "Marketing consultant", rating: "4.7", photo: "sofia-martin", quote: "I had a few days free and no destination in mind. I compared a couple of city breaks and found one that worked with my dates." },
 ];
 
 export default function HomePage() {
@@ -82,7 +76,7 @@ export default function HomePage() {
             <h2 id="stay-title">Find your kind of stay.</h2>
             <p>A beachfront escape, a city weekend, or somewhere with a view. Pick a starting point and make the search your own.</p>
           </div>
-          <Link className="btn-outline sm" href="/#trending">Explore Destinations <ArrowUpRightIcon size={15} /></Link>
+          <Link className="btn-outline sm" href="/#trending">Explore Destinations <FlyIcon /></Link>
         </div>
         <div className="stay-grid">
           {STAYS.map(({ title, prompt, photo, fallback }) => (
@@ -91,28 +85,14 @@ export default function HomePage() {
               href={`/chat?q=${encodeURIComponent(prompt)}`}
               key={title}
               prefetch={false}
-              style={{backgroundImage: `var(--card-photo-gradient), url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}}
             >
-              <span>{title}</span><span className="round-arrow"><ArrowUpRightIcon size={17} /></span>
+              <span className="stay-photo" aria-hidden="true" style={{backgroundImage: `url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}} /><span className="stay-title">{title}</span><span className="round-arrow"><FlyIcon /></span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="walkthrough" id="demo" aria-labelledby="walkthrough-title">
-        <div className="walkthrough-copy">
-          <div className="section-intro">
-            <span className="eyebrow">Book with mylzAI</span>
-            <h2 id="walkthrough-title">From an idea to options you can compare.</h2>
-          </div>
-          <ol className="workflow-list">
-            {WORKFLOW.map(({ Icon, title, copy }) => (
-              <li key={title}><span className="feature-icon"><Icon size={20} /></span><div><h3>{title}</h3><p>{copy}</p></div></li>
-            ))}
-          </ol>
-        </div>
-        <DemoShowcase />
-      </section>
+      <BookingJourney />
 
       <Trending initial={trendingTrips("LON", toISO(new Date()))} />
 
@@ -144,14 +124,14 @@ export default function HomePage() {
           <p>Mylz connects you with travel suppliers. Review the price and conditions for the option you choose.</p>
         </div>
         <div className="booking-grid">
-          {BOOKING.map(({ tag, title, copy, cta, href, photo }) => (
+          {BOOKING.map(({ tag, title, copy, cta, href, image }) => (
             <article className="booking-card" key={title}>
-              <img className="booking-card-photo" src={`https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=900&q=82`} alt="" loading="lazy" />
+              <img className="booking-card-photo" src={image} alt="" loading="lazy" />
               <div className="booking-card-copy">
                 <span className="booking-card-tag">{tag}</span>
                 <h3>{title}</h3>
                 <p>{copy}</p>
-                <a className="booking-card-cta" href={href}>{cta} <ArrowUpRightIcon size={14} /></a>
+                <a className="booking-card-cta" href={href}>{cta} <FlyIcon /></a>
               </div>
             </article>
           ))}
@@ -161,23 +141,15 @@ export default function HomePage() {
       <section className="reviews" aria-labelledby="reviews-title">
         <div className="section-intro centered">
           <h2 id="reviews-title">What Our Customers Say</h2>
-          <p>Fictional testimonials for this preview. Photos are illustrative.</p>
+          <p>Sample traveller stories to inspire your next escape.</p>
         </div>
         <div className="review-grid">
-          {SAMPLE_REVIEWS.map(({ name, role, rating, photo, quote }) => (
+          {SAMPLE_REVIEWS.map(({ name, role, photo, quote }) => (
             <figure className="review" key={name}>
-              <details className="review-media">
-                <summary aria-label={`Toggle testimonial preview for ${name}`}>
-                  <img src={`https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1200&h=700&q=82`} alt="" loading="lazy" />
-                  <span className="review-play" aria-hidden="true"><PlayIcon /><StopIcon /></span>
-                </summary>
-                <p className="review-preview">Sample testimonial · Video unavailable</p>
-              </details>
-              <blockquote>“{quote}”</blockquote>
-              <figcaption>
-                <span><strong>{name}</strong><small>{role}</small></span>
-                <span className="review-score" aria-label={`${rating} out of 5 stars`}><StarIcon size={16} /> {rating}/5</span>
-              </figcaption>
+              <img className="review-portrait" src={`/images/reviews/${photo}.webp`} alt="" width={420} height={640} loading="lazy" />
+              <div className="review-quote" aria-hidden="true">“</div>
+              <blockquote>{quote}</blockquote>
+              <figcaption><span><strong>{name}</strong><small>{role}</small></span></figcaption>
             </figure>
           ))}
         </div>
@@ -188,7 +160,7 @@ export default function HomePage() {
         <div className="faq-list">
           {FAQS.map((item) => (
             <details key={item.q}>
-              <summary>{item.q}<PlusIcon size={18} /></summary><p>{item.a} {item.href && <a href={item.href}>{item.linkLabel} <ArrowUpRightIcon size={14} /></a>}</p>
+              <summary>{item.q}<PlusIcon size={18} /></summary><p>{item.a} {item.href && <a href={item.href}>{item.linkLabel} <FlyIcon /></a>}</p>
             </details>
           ))}
         </div>

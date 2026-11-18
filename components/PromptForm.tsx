@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { createChat } from "@/lib/startChat";
 import { useCurrency } from "./CurrencyProvider";
-import { ArrowRightIcon, BeachIcon, CityIcon, FamilyIcon, HeartIcon, MicIcon, SkiIcon, TagIcon } from "./Icons";
+import { FlyIcon, BeachIcon, CityIcon, FamilyIcon, HeartIcon, MicIcon, SkiIcon, TagIcon } from "./Icons";
 import { useSpeech } from "./useSpeech";
 
 const HINTS = [
@@ -81,7 +81,7 @@ export function PromptForm({ variant }: Props) {
           </button>
         )}
         <button className="go" type="submit" aria-label="Start planning your trip!">
-          <ArrowRightIcon />
+          <FlyIcon />
         </button>
       </form>
     );
@@ -106,7 +106,7 @@ export function PromptForm({ variant }: Props) {
           </span>
         </div>
         <button className="search-btn" type="submit" aria-label="Search with MylzAI">
-          <ArrowRightIcon size={18} />
+          <FlyIcon />
         </button>
       </form>
 
