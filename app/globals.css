@@ -7019,3 +7019,11 @@ main h2 {
 .ig-showcase .ig-post-tile { border-radius: var(--r-lg); overflow: hidden; }
 .ig-showcase .ig-art,
 .ig-showcase .ig-art-photo { border-radius: inherit; }
+
+/* Keep the follow action alongside the Instagram introduction. */
+.ig-section-head > div { min-width: 0; }
+.ig-section-head .ig-follow-link { margin: 0; flex: none; white-space: nowrap; }
+.ig-section-head .ig-handle { margin-top: 12px; }
+@media (max-width: 760px) {
+  .ig-section-head .ig-follow-link { white-space: normal; }
+}

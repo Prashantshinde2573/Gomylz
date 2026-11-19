@@ -1,4 +1,4 @@
-import { Copy, Film, Camera, ArrowUpRight } from "lucide-react";
+import { Copy, Film, ArrowUpRight } from "lucide-react";
 import { InstagramCarousel } from "./InstagramCarousel";
 import { SOCIAL_POSTS, type SocialPost } from "@/lib/instagram";
 
@@ -24,8 +24,7 @@ export function PostType({post}: {post: SocialPost}) {
 
 export function InstagramShowcase() {
   return <section className="ig-showcase" aria-labelledby="instagram-title">
-    <header className="ig-section-head"><div><span className="eyebrow">The Mylz travel journal</span><h2 id="instagram-title">Discover Mylz on Instagram</h2><p>Travel inspiration, hidden gems, beautiful stays and experiences worth sharing.</p></div><a className="ig-handle" href="/instagram.html"><Camera size={20}/> @go.mylz</a></header>
+    <header className="ig-section-head"><div><span className="eyebrow">The Mylz travel journal</span><h2 id="instagram-title">Discover Mylz on Instagram</h2><p>Travel inspiration, hidden gems, beautiful stays and experiences worth sharing.</p></div><a className="ig-follow-link" href="/instagram.html">Follow @go.mylz on Instagram <span aria-hidden="true">→</span></a></header>
     <InstagramCarousel>{SOCIAL_POSTS.map(post => <a className="ig-post-tile" href={`/instagram.html?post=${post.id}`} key={post.id} aria-label={`Open ${post.title} on the Mylz Instagram preview`}><PostArtwork post={post}/><PostType post={post}/><span className="ig-tile-hover">View story <ArrowUpRight size={18}/></span></a>)}</InstagramCarousel>
-    <a className="ig-follow-link" href="/instagram.html">Follow @go.mylz on Instagram <span aria-hidden="true">→</span></a>
   </section>;
 }
