@@ -135,6 +135,16 @@ export function ChatClient({ id }: { id: string }) {
     started.current = true;
     const seed = readChatSeed(id);
     if (!seed?.prompt) return;
+    if (seed.draft) {
+      setDraft(seed.prompt);
+      window.requestAnimationFrame(() => {
+        const input = composerRef.current;
+        input?.focus();
+        const placeholder = /\[[^\]]+\]/.exec(seed.prompt);
+        if (placeholder) input?.setSelectionRange(placeholder.index, placeholder.index + placeholder[0].length);
+      });
+      return;
+    }
     say("user", seed.prompt);
     void search(seed.prompt, seed.query);
   }, [id, say, search]);

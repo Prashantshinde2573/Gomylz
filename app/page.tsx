@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InstagramShowcase } from "@/components/InstagramPosts";
 import { BookingJourney } from "@/components/BookingJourney";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Nav } from "@/components/Nav";
@@ -16,10 +17,10 @@ import { FAQS } from "@/lib/faq";
 export const revalidate = 3600;
 
 const STAYS = [
-  { title: "A resort by the water", prompt: "A resort stay in Bali for 7 nights", photo: "1571896349842-33c89424de2d", fallback: "how-3.jpg" },
-  { title: "A boutique city stay", prompt: "A boutique hotel in Lisbon for 3 nights", photo: "1611892440504-42a792e24d32", fallback: "how-1.jpg" },
-  { title: "A weekend hideaway", prompt: "A hotel in Rome for a long weekend", photo: "1566073771259-6a8506099945", fallback: "how-3.jpg" },
-  { title: "A room with a view", prompt: "A hotel in Dubai for 4 nights", photo: "1542314831-068cd1dbfeeb", fallback: "how-2.jpg" },
+  { title: "A resort by the water", preview: "Discover beautiful waterfront resorts with the right amenities, location and budget for your next getaway.", prompt: "Find a waterfront resort in [destination] for [guests], from [check-in] to [check-out], within [nightly budget]. Prioritize [amenities].", photo: "1571896349842-33c89424de2d", fallback: "how-3.jpg" },
+  { title: "A boutique city stay", preview: "Find character-filled boutique hotels in a neighbourhood you’ll love, with the comforts that matter to you.", prompt: "Find a boutique hotel in [city] for [guests], from [check-in] to [check-out], within [nightly budget], near [neighbourhood].", photo: "1611892440504-42a792e24d32", fallback: "how-1.jpg" },
+  { title: "A weekend hideaway", preview: "Discover inviting hideaways for a refreshing weekend escape, matched to your preferred setting and budget.", prompt: "Find a weekend hideaway in [destination] for [guests], from [check-in] to [check-out], within [nightly budget]. We prefer [setting].", photo: "1566073771259-6a8506099945", fallback: "how-3.jpg" },
+  { title: "A room with a view", preview: "Find a beautiful stay with a view worth waking up to, tailored to your dates, preferences and budget.", prompt: "Find a hotel with [preferred view] in [destination] for [guests], from [check-in] to [check-out], within [nightly budget].", photo: "1542314831-068cd1dbfeeb", fallback: "how-2.jpg" },
 ];
 
 const FEATURES = [
@@ -87,14 +88,15 @@ export default function HomePage() {
           <Link className="btn-outline sm" href="/#trending">Explore Destinations <FlyIcon /></Link>
         </div>
         <div className="stay-grid">
-          {STAYS.map(({ title, prompt, photo, fallback }) => (
+          {STAYS.map(({ title, preview, prompt, photo, fallback }) => (
             <Link
               className="stay-tile"
-              href={`/chat?q=${encodeURIComponent(prompt)}`}
+              href={`/chat?draft=${encodeURIComponent(prompt)}`}
+              aria-label={`${title}. Open an editable stay prompt in chat.`}
               key={title}
               prefetch={false}
             >
-              <span className="stay-photo" aria-hidden="true" style={{backgroundImage: `url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}} /><span className="stay-title">{title}</span><span className="round-arrow"><FlyIcon /></span>
+              <span className="stay-photo" aria-hidden="true" style={{backgroundImage: `url(https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=1050&q=80), url(/images/how/${fallback})`}} /><span className="stay-copy"><span className="stay-title">{title}</span><span className="stay-preview"><span className="stay-prompt">{preview}</span></span></span><span className="round-arrow"><FlyIcon /></span>
             </Link>
           ))}
         </div>
@@ -157,6 +159,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      <InstagramShowcase />
 
       <section className="faq" id="faq" aria-labelledby="faq-title">
         <div className="faq-head section-intro"><h2 id="faq-title">Frequently asked questions.</h2></div>

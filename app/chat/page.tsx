@@ -9,11 +9,12 @@ function Redirect() {
   const router = useRouter();
   const params = useSearchParams();
   const q = params.get("q")?.trim();
+  const draft = params.get("draft")?.trim();
   const blank = params.get("new") === "1";
 
   useEffect(() => {
-    router.replace(q || blank ? createChat(q ?? "") : "/");
-  }, [blank, q, router]);
+    router.replace(q || draft || blank ? createChat(draft ?? q ?? "", null, Boolean(draft)) : "/");
+  }, [blank, draft, q, router]);
 
   return <p className="chat-note">Starting your trip…</p>;
 }

@@ -19,6 +19,7 @@ export function BookingJourney() {
   const [active, setActive] = useState(0);
   const [visible, setVisible] = useState(false);
   const [reduced, setReduced] = useState(true);
+  const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
@@ -28,16 +29,20 @@ export function BookingJourney() {
     media.addEventListener("change", update);
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: .3 });
     if (root.current) observer.observe(root.current);
-    return () => { observer.disconnect(); media.removeEventListener("change", update); };
+    const resize = new ResizeObserver(([entry]) => {
+      root.current?.style.setProperty("--journey-width", `${entry.contentRect.width}px`);
+    });
+    if (root.current) resize.observe(root.current);
+    return () => { resize.disconnect(); observer.disconnect(); media.removeEventListener("change", update); };
   }, []);
 
   useEffect(() => {
-    if (!visible || reduced || focused) return;
+    if (!visible || reduced || focused || hovered) return;
     const timer = window.setInterval(() => {
       if (!document.hidden) setActive((current) => (current + 1) % STEPS.length);
     }, 6500);
     return () => window.clearInterval(timer);
-  }, [active, visible, reduced, focused]);
+  }, [active, visible, reduced, focused, hovered]);
 
   function choose(index: number) {
     setActive(index);
@@ -50,6 +55,7 @@ export function BookingJourney() {
         <p>Describe your trip, compare your options, and find your fit.</p>
       </header>
       <div className="journey-panels"
+        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
         onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
         {STEPS.map(({ title }, index) => (
