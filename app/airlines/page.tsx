@@ -14,11 +14,10 @@ export const metadata: Metadata = {
   openGraph: {title:"Mylz for Airlines | Conversational commerce",description:"Your fares, your brand, your customer relationship. Explore the conversational booking layer for airlines.",url:"https://gomylz.vercel.app/airlines",images:[{url:"/images/airlines/aircraft.png",alt:"Original unbranded passenger aircraft"}]},
 };
 const benefits = [
-  {icon:Globe2, label:"Experience & ownership",title:"Own the trip from the first question.",text:"Today your website can only take the booking once passengers have decided. Make your website the place where trips are inspired, planned—and decided."},
-  {icon:Sparkles,label:"Real personalisation",title:"More bookings from the same traffic.",text:"First-party intent data stays with you. The right answer helps convert the traffic you already pay for."},
-  {icon:Headphones,label:"Retailing & self-servicing",title:"Richer baskets. Simpler service.",text:"Ancillaries ride along, while changes, refunds and delays are resolved in the conversation.",note:"Up to 30% fewer calls¹"},
-  {icon:TrendingUp,label:"RASK as an obsession",title:"Lower cost of sale per seat.",text:"Every booking made direct avoids indirect distribution costs, on capacity you already fly."},
-  {icon:CircleDollarSign,label:"A non-air revenue stream",title:"The journey goes beyond the seat.",text:"Hotels, experiences and transfers in the same order, with a revenue share on every sale and no inventory held."},
+  {area:"ownership",label:"Experience, ownership & personalisation",title:"Own the trip from the first question.",text:"Inspire, plan and decide on your site. Keep first-party intent—and convert the traffic you already pay for.",image:"/images/airlines/demand/digital-planning.webp",alt:"People reviewing options together on a laptop"},
+  {area:"service",label:"Retailing & self-servicing",title:"Richer baskets. Simpler service.",text:"Ancillaries, changes, refunds and delays—all resolved in the conversation.",image:"/images/airlines/demand/airport-terminal.webp",alt:"Passengers moving through a modern airport terminal",note:"Up to 30% fewer calls¹"},
+  {area:"cost",label:"RASK as an obsession",title:"Lower cost of sale per seat.",text:"Direct bookings avoid indirect distribution costs on capacity you already fly.",image:"/images/airlines/demand/above-clouds.webp",alt:"An unbranded aircraft wing above sunlit clouds"},
+  {area:"beyond",label:"A non-air revenue stream",title:"The journey goes beyond the seat.",text:"Hotels, experiences and transfers in one order. Earn a revenue share without holding inventory.",image:"/images/booking/stays.webp",alt:"A secluded accommodation overlooking a pool and mountain landscape"},
 ];
 const technology = [
   {icon:MessageCircle,title:"Conversational AI",text:"Understands passenger intent in natural language."},
@@ -99,7 +98,10 @@ export default function AirlinesPage() {
 
       <section className={styles.section} id="airline-value" aria-labelledby="value-title" data-air-reveal>
         <div className={styles.introSplit}><div><span className={styles.eyebrow}>The AI-native conversational booking layer™</span><h2 id="value-title">Direct demand.<br/>Richer baskets. <span>Owned intent.</span></h2></div><p>E-commerce captured clicks. AI captures intent and context. Whoever owns them owns the customer.</p></div>
-        <div className={styles.benefits}>{benefits.map(({icon:Icon,label,title,text,note})=><article key={title}><Icon size={25}/><span>{label}</span><h3>{title}</h3><p>{text}</p>{note&&<small>{note}</small>}</article>)}</div>
+        <div className={styles.valueBento}>{benefits.map(({area,label,title,text,image,alt,note})=><article className={styles.valueCard} data-value-area={area} key={area} data-air-reveal>
+          <div className={styles.valueImage}><img src={image} alt={alt} width={1800} height={1200} loading="lazy"/></div>
+          <div className={styles.valueCopy}><span>{label}</span><h3>{title}</h3><p>{text}</p>{note&&<small>{note}</small>}</div>
+        </article>)}</div>
         <p className={styles.footnote}>¹ Potential call reduction stated in the current Mylz Airlines offering. Pilot results depend on your implementation and passenger journeys.</p>
       </section>
 

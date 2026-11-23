@@ -619,3 +619,64 @@
   .ownershipStatement { font-size: 18px; max-width: 36ch; }
   .ownershipSection + .section { padding-top: var(--s-7); }
 }
+
+/* Booking-layer benefits: two portrait cards framing two stacked landscapes. */
+.valueBento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(300px, auto));
+  grid-template-areas: "ownership service beyond" "ownership cost beyond";
+  gap: var(--s-4);
+  margin-top: var(--s-7);
+}
+.valueCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--card-tint);
+}
+.valueCard[data-value-area="ownership"] { grid-area: ownership; }
+.valueCard[data-value-area="service"] { grid-area: service; }
+.valueCard[data-value-area="cost"] { grid-area: cost; }
+.valueCard[data-value-area="beyond"] { grid-area: beyond; }
+.valueImage { position: relative; overflow: hidden; min-height: 120px; flex: 1; background: var(--ground); }
+.valueImage img { display: block; width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; object-position: center; }
+.valueCard[data-value-area="ownership"] .valueImage { min-height: 300px; }
+.valueCard[data-value-area="beyond"] .valueImage { min-height: 300px; }
+.valueCard[data-value-area="ownership"] img { object-position: 40% center; }
+.valueCard[data-value-area="service"] img { object-position: center 65%; }
+.valueCard[data-value-area="cost"] img { object-position: center 35%; }
+.valueCard[data-value-area="beyond"] img { object-position: 60% center; }
+.valueCopy { padding: var(--s-5); }
+.valueCopy > span { display: block; color: var(--teal); font-size: 12px; font-weight: 500; line-height: 1.5; margin-bottom: var(--s-2); }
+.valueCopy h3 { color: var(--navy); font-size: clamp(22px, 2vw, 28px); font-weight: 600; line-height: 1.15; letter-spacing: -.025em; }
+.valueCopy p { color: var(--slate); font-size: 15px; line-height: 1.5; margin-top: var(--s-3); }
+.valueCopy small { display: block; color: var(--teal); font-size: 12px; line-height: 1.5; margin-top: var(--s-3); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .valueImage img { transition: transform .7s cubic-bezier(.2,.65,.3,1); }
+  .valueCard:hover .valueImage img { transform: scale(1.035); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .page .valueCard:nth-child(2)[data-air-ready="true"] { transition-delay: .06s; }
+  .page .valueCard:nth-child(3)[data-air-ready="true"] { transition-delay: .12s; }
+  .page .valueCard:nth-child(4)[data-air-ready="true"] { transition-delay: .18s; }
+}
+@media (max-width: 900px) {
+  .valueBento {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    grid-template-rows: auto auto;
+    grid-template-areas: "ownership beyond" "service cost";
+    margin-top: var(--s-6);
+  }
+  .valueImage, .valueCard[data-value-area="ownership"] .valueImage,
+  .valueCard[data-value-area="beyond"] .valueImage { flex: none; min-height: 0; height: auto; aspect-ratio: 4/3; }
+}
+@media (max-width: 640px) {
+  .valueBento { grid-template-columns: minmax(0,1fr); grid-template-areas: "ownership" "service" "cost" "beyond"; }
+  .valueImage, .valueCard[data-value-area="ownership"] .valueImage,
+  .valueCard[data-value-area="beyond"] .valueImage { aspect-ratio: 16/9; }
+  .valueCopy h3 { font-size: 24px; }
+}
