@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { BadgeCheck, CircleDollarSign, Globe2, Headphones, Layers3, MessageCircle, Plug, ShieldCheck, Sparkles, Ticket, TrendingUp } from "lucide-react";
+import { BadgeCheck, CircleDollarSign, Globe2, Headphones, Layers3, MessageCircle, ShieldCheck, Sparkles, Ticket, TrendingUp } from "lucide-react";
 import { FlyIcon } from "@/components/Icons";
+import { DiscoveryCall } from "@/components/airlines/DiscoveryCall";
 import { Nav } from "@/components/Nav";
+import { EditorialImageMotion } from "@/components/airlines/EditorialImageMotion";
 import { AirlineMotion } from "@/components/airlines/AirlineMotion";
 import { AirlineExperience } from "@/components/airlines/AirlineExperience";
 import styles from "./airlines.module.css";
@@ -13,18 +15,24 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://gomylz.vercel.app/airlines" },
   openGraph: {title:"Mylz for Airlines | Conversational commerce",description:"Your fares, your brand, your customer relationship. Explore the conversational booking layer for airlines.",url:"https://gomylz.vercel.app/airlines",images:[{url:"/images/airlines/aircraft.png",alt:"Original unbranded passenger aircraft"}]},
 };
-const benefits = [
-  {area:"ownership",label:"Experience, ownership & personalisation",title:"Own the trip from the first question.",text:"Inspire, plan and decide on your site. Keep first-party intent—and convert the traffic you already pay for.",image:"/images/airlines/demand/digital-planning.webp",alt:"People reviewing options together on a laptop"},
-  {area:"service",label:"Retailing & self-servicing",title:"Richer baskets. Simpler service.",text:"Ancillaries, changes, refunds and delays—all resolved in the conversation.",image:"/images/airlines/demand/airport-terminal.webp",alt:"Passengers moving through a modern airport terminal",note:"Up to 30% fewer calls¹"},
-  {area:"cost",label:"RASK as an obsession",title:"Lower cost of sale per seat.",text:"Direct bookings avoid indirect distribution costs on capacity you already fly.",image:"/images/airlines/demand/above-clouds.webp",alt:"An unbranded aircraft wing above sunlit clouds"},
-  {area:"beyond",label:"A non-air revenue stream",title:"The journey goes beyond the seat.",text:"Hotels, experiences and transfers in one order. Earn a revenue share without holding inventory.",image:"/images/booking/stays.webp",alt:"A secluded accommodation overlooking a pool and mountain landscape"},
+const bookingBenefits = [
+  {icon:Globe2,label:"Experience & ownership",title:"Own the trip from the first question.",description:"Inspire, plan and decide on your site."},
+  {icon:Sparkles,label:"Real personalisation",title:"More bookings from the same traffic.",description:"Turn first-party intent into more direct bookings."},
+  {icon:Headphones,label:"Retailing & self-servicing",title:"Richer baskets. Simpler service.",description:"Ancillaries, changes and refunds resolved in conversation."},
+  {icon:TrendingUp,label:"RASK as an obsession",title:"Lower cost of sale per seat.",description:"Direct bookings avoid indirect distribution costs."},
+  {icon:CircleDollarSign,label:"A non-air revenue stream",title:"The journey goes beyond the seat.",description:"Hotels, experiences and transfers in one order."},
 ];
-const technology = [
-  {icon:MessageCircle,title:"Conversational AI",text:"Understands passenger intent in natural language."},
-  {icon:Layers3,title:"RAG & business rules",text:"Live fares and availability, with your pricing logic."},
-  {icon:Plug,title:"NDC & your APIs",text:"No NDC? No problem. Connect directly to your existing PSS."},
-  {icon:ShieldCheck,title:"Guardrails",text:"Verified data, automatic fallback, cost limits and attack protection."},
-  {icon:BadgeCheck,title:"Works with your own agent",text:"Your agent stays in charge and hands booking to mylz via A2A, with zero context loss."},
+const travelSteps = [
+  {title:"Connect your inventory",description:"Connect your PSS, OMS and inventory. AI only sells what you sell.",image:"operations",width:1400,height:2100,alt:"Aircraft flight-deck instruments and operational controls"},
+  {title:"Make it yours",description:"Your brand, your voice, your customer relationship.",image:"cabin",width:1400,height:1050,alt:"A premium passenger seat beside aircraft cabin windows"},
+  {title:"Launch everywhere",description:"Your app, website and the AI assistants your customers already use.",image:"book",width:1200,height:800,alt:"A traveller using a digital device while waiting at the airport"},
+];
+const technicalCapabilities = [
+  {title:"Conversational AI",description:"Understands passenger intent in natural language."},
+  {title:"RAG & Business Rules",description:"Live fares, availability and your pricing logic."},
+  {title:"NDC & APIs",description:"Connects directly to your existing PSS."},
+  {title:"Guardrails",description:"Verified data, automatic fallback and cost protection."},
+  {title:"Agent Integration",description:"Works with your own AI agents via A2A."},
 ];
 export default function AirlinesPage() {
   return <div className={styles.page}>
@@ -97,12 +105,23 @@ export default function AirlinesPage() {
       </section>
 
       <section className={styles.section} id="airline-value" aria-labelledby="value-title" data-air-reveal>
-        <div className={styles.introSplit}><div><span className={styles.eyebrow}>The AI-native conversational booking layer™</span><h2 id="value-title">Direct demand.<br/>Richer baskets. <span>Owned intent.</span></h2></div><p>E-commerce captured clicks. AI captures intent and context. Whoever owns them owns the customer.</p></div>
-        <div className={styles.valueBento}>{benefits.map(({area,label,title,text,image,alt,note})=><article className={styles.valueCard} data-value-area={area} key={area} data-air-reveal>
-          <div className={styles.valueImage}><img src={image} alt={alt} width={1800} height={1200} loading="lazy"/></div>
-          <div className={styles.valueCopy}><span>{label}</span><h3>{title}</h3><p>{text}</p>{note&&<small>{note}</small>}</div>
-        </article>)}</div>
-        <p className={styles.footnote}>¹ Potential call reduction stated in the current Mylz Airlines offering. Pilot results depend on your implementation and passenger journeys.</p>
+        <header className={styles.valueHeader}>
+          <span className={styles.eyebrow}>The AI-native conversational booking layer™</span>
+          <h2 id="value-title">Direct demand. Richer baskets. Owned intent.</h2>
+          <p>E-commerce captured clicks. AI captures intent and context. Whoever owns them owns the customer.</p>
+        </header>
+        <div className={styles.valueEditorial}>
+          <div className={styles.valueFeatured}>
+            <div className={styles.valueFeaturedImage} data-editorial-image><EditorialImageMotion/><img src="/images/airlines/demand/above-clouds.webp" alt="An unbranded aircraft wing above sunlit clouds" width={1800} height={1196} loading="lazy"/></div>
+          </div>
+          <ol className={styles.valueFeatureList} aria-label="Conversational booking benefits">
+            {bookingBenefits.map(({label,title,description},index)=><li className={styles.valueFeatureItem} key={label} data-air-reveal>
+              <span className={styles.valueSequence} aria-hidden="true">{String(index+1).padStart(2,"0")}</span>
+              <span className={styles.valueRule} aria-hidden="true"/>
+              <div className={styles.valueFeatureText}><span>{label}</span><h3>{title}</h3><p>{description}</p></div>
+            </li>)}
+          </ol>
+        </div>
       </section>
 
       <section className={styles.loyalty} aria-labelledby="loyalty-title" data-air-reveal>
@@ -111,12 +130,21 @@ export default function AirlinesPage() {
       </section>
 
       <section className={styles.section} id="airline-how" aria-labelledby="how-title" data-air-reveal>
-        <div className={styles.introSplit}><div><span className={styles.eyebrow}>How it works</span><h2 id="how-title">Your channels.<br/>AI-native in <span>8–12 weeks.</span></h2></div><p>Others are building AI travel apps. We power the booking experience behind the brands that already own the customer.</p></div>
-        <div className={styles.integration}><ol className={styles.steps}><li><span>Connect</span><h3>Connect your inventory.</h3><p>Plug into your PSS, OMS and inventory. The AI only sells what you sell.</p></li><li><span>Personalise</span><h3>Make it yours.</h3><p>Your name, look and tone of voice. Customers never see mylz.</p></li><li><span>Launch</span><h3>Go where your customers are.</h3><p>Your app, your website and the AI assistants they already use.</p></li></ol><div className={styles.stackDiagram}><div className={styles.diagramTop}><span>Your website</span><span>Your app</span><span>AI assistants</span></div><div className={styles.diagramConnector}/><div className={styles.diagramCore}><Sparkles size={25}/><strong>mylz factory</strong><span>AI-native conversational booking layer</span></div><div className={styles.diagramConnector}/><div className={styles.diagramBottom}><span>PSS</span><span>OMS</span><span>Your APIs</span></div><p>Your inventory. Your rules. Your payment rails.</p></div></div>
-        <div className={styles.technology}><h3>Under the hood.</h3><div>{technology.map(({icon:Icon,title,text})=><article key={title}><Icon size={21}/><h4>{title}</h4><p>{text}</p></article>)}</div><p className={styles.techConclusion}>The challenge is integration and orchestration—not model complexity.</p></div>
+        <div className={styles.howHeader}><span className={styles.eyebrow}>How it works</span><h2 id="how-title">Go live in your channels in 8 to 12 weeks.</h2></div>
+        <div className={styles.howCards}>
+          {travelSteps.map(({title,description,image,width,height,alt},index)=><article className={styles.howCard} key={title} data-air-reveal>
+            <img className={styles.howBackground} src={`/images/airlines/journey/${image}.webp`} alt={alt} width={width} height={height} loading="lazy"/>
+            <div className={styles.howCopy}><span className={styles.howStep}>{String(index+1).padStart(2,"0")}</span><h3>{title}</h3><p>{description}</p></div>
+          </article>)}
+        </div>
+        <div className={styles.howTechnical}>
+          <h3>Under the hood</h3>
+          <div className={styles.howCapabilities}>{technicalCapabilities.map(({title,description})=><article key={title}><h4>{title}</h4><p>{description}</p></article>)}</div>
+          <p className={styles.howClosing}>The challenge is integration and orchestration — not model complexity.</p>
+        </div>
       </section>
 
-      <section className={styles.contact} id="airline-contact" aria-labelledby="contact-title" data-air-reveal><span className={styles.eyebrow}>Pilot first. Prove the lift. Then scale.</span><h2 id="contact-title">Let’s start with<br/><em>your airline.</em></h2><p>See your airline’s AI in action. You keep the lion’s share.<br/>Mylz takes a small fee on results.</p><div className={styles.actions}><a className="btn-accent" href={CONTACT}>Book a 30-min discovery call</a><a className="btn-outline" href="#airline-experience">Explore the passenger experience <FlyIcon/></a></div><a className={styles.contactEmail} href="mailto:partners@gomylz.com">partners@gomylz.com</a><p className={styles.contactNote}>We’ll walk you through the layer on your own routes and scope a pilot that fits your stack.</p></section>
+      <section className={styles.contact} id="airline-contact" aria-labelledby="contact-title" data-air-reveal><span className={styles.eyebrow}>Pilot first. Prove the lift. Then scale.</span><h2 id="contact-title">Let’s start with<br/><em>your airline.</em></h2><p>See your airline’s AI in action. You keep the lion’s share.<br/>Mylz takes a small fee on results.</p><div className={styles.actions}><DiscoveryCall/><a className="btn-outline on-dark" href="#airline-experience">Explore the passenger experience <FlyIcon/></a></div><a className={styles.contactEmail} href="mailto:partners@gomylz.com">partners@gomylz.com</a><p className={styles.contactNote}>We’ll walk you through the layer on your own routes and scope a pilot that fits your stack.</p></section>
     </main>
   </div>;
 }

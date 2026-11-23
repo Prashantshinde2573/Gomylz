@@ -334,9 +334,32 @@
 .technology { margin-top: var(--s-7); padding-top: var(--s-6); }
 .technology > div { gap: var(--s-5); margin-top: var(--s-6); }
 .contact {
+  isolation: isolate;
+  min-height: 640px;
   padding: var(--section-y) var(--gutter);
-  background: linear-gradient(180deg, var(--ground), var(--mist));
-  border-top: 1px solid var(--line);
+  background: var(--ground);
+  border-top: 0;
+}
+.contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb,var(--navy) 8%,transparent),color-mix(in srgb,var(--navy) 12%,transparent) 45%,color-mix(in srgb,var(--navy) 50%,transparent)),
+    url("/images/airlines/contact-sunset.webp") center bottom / cover no-repeat;
+  filter: saturate(.92);
+}
+.page .contact h2, .contact > p { color: var(--white); }
+.contact .eyebrow, .contactEmail { color: var(--ice); }
+.contact :global(.btn-accent) { background: var(--white); color: var(--navy); }
+.contact :global(.btn-accent):hover { background: var(--mist); }
+@media (max-width: 580px) {
+  .contact { min-height: 0; }
+  .contact::before {
+    background-position: center, right bottom;
+  }
 }
 .contact > p { margin-top: var(--s-5); line-height: 1.55; }
 .contact .actions { margin-top: var(--s-5); gap: var(--s-5); }
@@ -620,63 +643,97 @@
   .ownershipSection + .section { padding-top: var(--s-7); }
 }
 
-/* Booking-layer benefits: two portrait cards framing two stacked landscapes. */
-.valueBento {
+/* Full-width introduction above equal editorial columns. */
+.valueHeader { margin-bottom: clamp(24px, 3.4vw, 44px); }
+.valueHeader h2 { max-width: 24ch; }
+.valueHeader > p { max-width: 64ch; margin-top: var(--s-4); color: var(--slate); font-size: 16px; line-height: 1.55; }
+.valueEditorial {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(300px, auto));
-  grid-template-areas: "ownership service beyond" "ownership cost beyond";
-  gap: var(--s-4);
-  margin-top: var(--s-7);
-}
-.valueCard {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  background: var(--card-tint);
+  gap: var(--s-6);
+  align-items: start;
 }
-.valueCard[data-value-area="ownership"] { grid-area: ownership; }
-.valueCard[data-value-area="service"] { grid-area: service; }
-.valueCard[data-value-area="cost"] { grid-area: cost; }
-.valueCard[data-value-area="beyond"] { grid-area: beyond; }
-.valueImage { position: relative; overflow: hidden; min-height: 120px; flex: 1; background: var(--ground); }
-.valueImage img { display: block; width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; object-position: center; }
-.valueCard[data-value-area="ownership"] .valueImage { min-height: 300px; }
-.valueCard[data-value-area="beyond"] .valueImage { min-height: 300px; }
-.valueCard[data-value-area="ownership"] img { object-position: 40% center; }
-.valueCard[data-value-area="service"] img { object-position: center 65%; }
-.valueCard[data-value-area="cost"] img { object-position: center 35%; }
-.valueCard[data-value-area="beyond"] img { object-position: 60% center; }
-.valueCopy { padding: var(--s-5); }
-.valueCopy > span { display: block; color: var(--teal); font-size: 12px; font-weight: 500; line-height: 1.5; margin-bottom: var(--s-2); }
-.valueCopy h3 { color: var(--navy); font-size: clamp(22px, 2vw, 28px); font-weight: 600; line-height: 1.15; letter-spacing: -.025em; }
-.valueCopy p { color: var(--slate); font-size: 15px; line-height: 1.5; margin-top: var(--s-3); }
-.valueCopy small { display: block; color: var(--teal); font-size: 12px; line-height: 1.5; margin-top: var(--s-3); }
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .valueImage img { transition: transform .7s cubic-bezier(.2,.65,.3,1); }
-  .valueCard:hover .valueImage img { transform: scale(1.035); }
+.valueFeatured { position: relative; align-self: stretch; width: 100%; max-width: 100%; min-width: 0; padding-inline: var(--s-2); }
+.valueFeaturedImage { position: absolute; inset: 0 var(--s-2); overflow: hidden; min-height: 0; border-radius: var(--r-lg); background: var(--ground); }
+.valueFeaturedImage img { position: absolute; top: -14px; left: 0; display: block; width: 100%; height: calc(100% + 28px); max-width: 100%; object-fit: cover; object-position: 60% center; transform: translate3d(0,var(--editorial-shift,0px),0); }
+.valueFeatureList {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--s-5);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0 var(--s-2);
+  list-style: none;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .page .valueCard:nth-child(2)[data-air-ready="true"] { transition-delay: .06s; }
-  .page .valueCard:nth-child(3)[data-air-ready="true"] { transition-delay: .12s; }
-  .page .valueCard:nth-child(4)[data-air-ready="true"] { transition-delay: .18s; }
+.valueFeatureItem { display: grid; grid-template-columns: 36px 20px minmax(0,1fr); align-items: start; width: 100%; max-width: 100%; min-width: 0; column-gap: var(--s-2); }
+.valueFeatureText { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.valueSequence { color: var(--navy); font-size: 30px; font-weight: 400; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.valueRule { display: block; height: 1px; background: var(--line); margin-top: 15px; }
+.valueFeatureText > span { display: block; color: var(--teal); font-size: 12px; font-weight: 500; line-height: 1.5; margin-bottom: var(--s-2); }
+.valueFeatureText h3 { color: var(--navy); font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -.025em; }
+.valueFeatureText p { color: var(--slate); font-size: 15px; line-height: 1.5; margin-top: var(--s-2); }
+@media (prefers-reduced-motion: reduce) {
+  .valueFeaturedImage img { top: 0; height: 100%; transform: none; }
 }
-@media (max-width: 900px) {
-  .valueBento {
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    grid-template-rows: auto auto;
-    grid-template-areas: "ownership beyond" "service cost";
-    margin-top: var(--s-6);
-  }
-  .valueImage, .valueCard[data-value-area="ownership"] .valueImage,
-  .valueCard[data-value-area="beyond"] .valueImage { flex: none; min-height: 0; height: auto; aspect-ratio: 4/3; }
+@media (max-width: 1050px) {
+  .valueEditorial { gap: var(--s-6); }
+  .valueFeatureItem { grid-template-columns: 32px 16px minmax(0,1fr); }
+  .valueSequence { font-size: 28px; }
+  .valueFeatureText h3 { font-size: 20px; }
 }
-@media (max-width: 640px) {
-  .valueBento { grid-template-columns: minmax(0,1fr); grid-template-areas: "ownership" "service" "cost" "beyond"; }
-  .valueImage, .valueCard[data-value-area="ownership"] .valueImage,
-  .valueCard[data-value-area="beyond"] .valueImage { aspect-ratio: 16/9; }
-  .valueCopy h3 { font-size: 24px; }
+@media (max-width: 1024px) {
+  .valueEditorial { grid-template-columns: minmax(0,1fr); gap: var(--s-6); }
+  .valueFeaturedImage { position: relative; inset: auto; width: 100%; aspect-ratio: 16 / 9; max-height: 360px; min-height: 0; }
+  .valueHeader > p { font-size: 15px; }
+  .valueFeatureList { gap: var(--s-5); }
+  .valueFeatureItem { grid-template-columns: 32px 16px minmax(0,1fr); }
 }
+
+/* Airline rollout: full-bleed photography above a compact technical index. */
+.howHeader { text-align: center; margin-bottom: var(--s-7); }
+.howHeader h2 { max-width: 24ch; margin-inline: auto; }
+.howCards { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--s-5); align-items: stretch; }
+.howCard { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-width: 0; min-height: 390px; overflow: hidden; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--navy); }
+.howBackground { position: absolute; inset: 0; z-index: -2; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.howCard::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, color-mix(in srgb,var(--navy) 4%,transparent) 15%,color-mix(in srgb,var(--navy) 25%,transparent) 40%,color-mix(in srgb,var(--navy) 94%,transparent) 100%); }
+.howCard:nth-child(3) .howBackground { object-position: 65% center; }
+.howCopy { width: 100%; padding: var(--s-5); }
+.howStep { display: block; color: var(--cyan); font-size: 13px; font-weight: 500; line-height: 1.5; letter-spacing: .08em; font-variant-numeric: tabular-nums; margin-bottom: var(--s-3); }
+.howCard h3 { color: var(--white); font-size: 24px; font-weight: 600; line-height: 1.2; letter-spacing: -.025em; }
+.howCard p { color: var(--white); font-size: 15px; line-height: 1.5; margin-top: var(--s-3); }
+.howTechnical { margin-top: var(--s-7); }
+.howTechnical > h3 { color: var(--navy); font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -.025em; }
+.howCapabilities { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: var(--s-5); margin-top: var(--s-5); }
+.howCapabilities > article { border-top: 1px solid var(--cyan); padding-top: var(--s-4); }
+.howCapabilities h4 { margin: 0; color: var(--navy); font-size: 15px; font-weight: 600; line-height: 1.4; }
+.howCapabilities p { color: var(--slate); font-size: 14px; line-height: 1.55; margin-top: var(--s-2); }
+.howClosing { margin-top: var(--s-6); color: var(--slate); font-size: 15px; line-height: 1.55; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) {
+  .howBackground { transition: transform .7s ease; }
+  .howCard:hover .howBackground { transform: scale(1.035); }
+}
+@media (max-width: 1050px) {
+  .howCards { gap: var(--s-4); }
+  .howCard { min-height: 370px; }
+  .howCard h3 { font-size: 22px; }
+  .howCapabilities { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+  .howCards { grid-template-columns: minmax(0,1fr); gap: var(--s-5); }
+  .howCard { min-height: 340px; }
+  .howHeader { margin-bottom: var(--s-6); }
+  .howTechnical { margin-top: var(--s-6); }
+  .howCapabilities { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 420px) {
+  .howCapabilities { grid-template-columns: minmax(0,1fr); gap: var(--s-5); }
+}
+
+/* The shared footer stays intact; only Airlines omits its trip-planning banner. */
+.page + :global(.footer) > :global(.footer-banner) { display: none; }
