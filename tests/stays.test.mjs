@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {registerHooks} from 'node:module';
+registerHooks({resolve(specifier,ctx,next){if(specifier.startsWith('./')&&!specifier.endsWith('.ts')&&ctx.parentURL?.includes('/lib/'))return next(specifier+'.ts',ctx);return next(specifier,ctx);}});
+const {hotelRequest,stayQuery}=await import('../lib/stay-context.ts');
+const {makeStays}=await import('../lib/demo.ts');
+const {hotelInfo,hotelRooms,bookStay,filterStays,parseStayFilters}=await import('../lib/stays.ts');
+assert.match(hotelRequest('Lisbon stay','2026-11-24').question,/check-in/);
+assert.match(hotelRequest('Lisbon stay today','2026-11-24').question,/nights/);
+const q=hotelRequest('Lisbon stay, 2 nights and check in today, 2 adults','2026-11-24').query;
+assert.equal(q.date,'2026-11-24');assert.equal(q.returnDate,'2026-11-26');assert.equal(q.adults,2);
+const stays=makeStays(q);assert.equal(stays.length,6);
+const room=hotelRooms(stays[0],q)[1];assert.equal(room.rates.length,2);assert.ok(room.rates[1].breakfast);assert.ok(room.rates[1].pricePerNightGBP>room.rates[0].pricePerNightGBP);
+const booked=bookStay(stays[0],q,room,room.rates[1]);assert.equal(booked.booking.roomName,room.name);assert.equal(booked.booking.rateName,'Bed and breakfast');assert.equal(booked.pricePerNightGBP,room.rates[1].pricePerNightGBP);assert.equal(booked.booking.cityTaxGBP,12);assert.ok(booked.booking.cancelUntil<=q.date);
+const star=filterStays(stays,q,{stars:5});assert.ok(star.length>0);assert.ok(star.every(s=>hotelInfo(s,q).stars===5));
+const free=filterStays(stays,q,{freeCancellation:true});assert.ok(free.every(s=>hotelInfo(s,q).freeCancellation));
+assert.equal(filterStays(stays,q,{maxTotal:1}).length,0);assert.deepEqual(parseStayFilters('Clear hotel filters',{stars:5},1),{});assert.equal(parseStayFilters('Show hotels under ₹10,000 total',{},100).maxTotal,100);assert.equal(parseStayFilters('Show me 5-star hotels only',{},1).stars,5);
+const moved=stayQuery(q,'Hotels in Paris for 3 nights');assert.equal(moved.to.cityCode,'PAR');assert.equal(moved.returnDate,'2026-11-27');assert.equal(q.to.cityCode,'LIS');
+console.log('PASS: missing stay details, check-in, nights, guests, room rates, breakfast pricing, cancellation, local tax, star/budget/cancellation filters and destination changes.');
+
+const flight={...q,kind:'flight',tripType:'one-way',returnDate:undefined};
+assert.equal(stayQuery(flight),null);
+assert.equal(stayQuery({...flight,tripType:'return',returnDate:'2026-11-28'}),null);
+assert.equal(stayQuery(flight,'3 nights'),null);
+assert.equal(stayQuery(flight,'2026-12-04 for 2 nights').returnDate,'2026-12-06');
+assert.equal(stayQuery(q).returnDate,'2026-11-26');
+assert.equal(stayQuery(q,'2026-12-05 2026-12-03'),null);
+assert.deepEqual(makeStays(flight),[]);
+assert.deepEqual(makeStays({...q,returnDate:undefined}),[]);
+console.log('PASS: flights never imply hotel dates; hotel inventory requires an explicit valid stay range.');
+
+assert.match(hotelRequest('Lisbon 2026-12-01 2026-12-99','2026-11-24').question,/valid check-out/);

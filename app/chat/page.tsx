@@ -13,7 +13,7 @@ function Redirect() {
   const blank = params.get("new") === "1";
 
   useEffect(() => {
-    router.replace(q || draft || blank ? createChat(draft ?? q ?? "", null, Boolean(draft)) : "/");
+    router.replace(createChat(draft ?? q ?? "", null, Boolean(draft)));
   }, [blank, draft, q, router]);
 
   return <p className="chat-note">Starting your trip…</p>;

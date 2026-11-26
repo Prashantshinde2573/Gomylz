@@ -14,7 +14,7 @@ const HOME_LINKS = [
   ["FAQ", "/#faq"],
 ];
 
-export function Nav() {
+export function Nav({ solid = false }: { solid?: boolean } = {}) {
   const pathname = usePathname();
   const router = useRouter();
   const inChat = pathname === "/chat" || pathname.startsWith("/chat/");
@@ -40,7 +40,7 @@ export function Nav() {
   }, []);
 
   return (
-    <header className={`nav${inChat ? " nav-chat" : ""}${inChat || scrolled ? " is-solid" : " is-over-hero"}`}>
+    <header className={`nav${inChat ? " nav-chat" : ""}${solid || inChat || scrolled ? " is-solid" : " is-over-hero"}`}>
       <details className="nav-menu">
         <summary aria-label="Navigation menu"><MenuIcon size={19} /></summary>
         <nav aria-label="Main menu">

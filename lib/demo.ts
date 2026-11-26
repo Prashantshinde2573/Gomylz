@@ -47,6 +47,7 @@ export type Flight = {
 };
 
 export type Stay = {
+  booking?: { roomName:string; rateName:string; rateId:string; refundable:boolean; cancelUntil?:string; cancellationFeeGBP:number; cityTaxGBP:number };
   id: string;
   name: string;
   area: string;
@@ -304,7 +305,8 @@ function makeFlights(q: TripQuery): Flight[] {
   }).sort((a, b) => a.priceGBP - b.priceGBP);
 }
 
-function makeStays(q: TripQuery): Stay[] {
+export function makeStays(q: TripQuery): Stay[] {
+  if(q.kind !== "hotel" || !q.date || !q.returnDate || !Number.isFinite(Date.parse(q.date)) || !Number.isFinite(Date.parse(q.returnDate)) || q.returnDate<=q.date) return [];
   const dest = cityForPlace(q.to.code)!;
   const nights = Math.max(1, q.returnDate ? nightsBetween(q.date, q.returnDate) : 1);
   const rand = seeded(`stay-${dest.code}-${q.date}`);

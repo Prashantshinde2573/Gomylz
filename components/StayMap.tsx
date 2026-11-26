@@ -1,0 +1,22 @@
+"use client";
+import {useEffect,useRef,useState} from 'react';
+import {cityForPlace} from '@/lib/airports';
+import {hotelInfo} from '@/lib/stays';
+import type {Stay,TripQuery} from '@/lib/demo';
+function point(lat:number,lon:number,z:number){const n=256*2**z;const s=Math.sin(lat*Math.PI/180);return {x:(lon+180)/360*n,y:(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n};}
+export function StayMap({stays,query,format,onSelect,onDetails,selectedId,compact=false}:{stays:Stay[];query:TripQuery;format:(value:number)=>string;onSelect:(s:Stay)=>void;onDetails?:(s:Stay)=>void;selectedId?:string;compact?:boolean}){
+ const city=cityForPlace(query.to.code);const [zoom,setZoom]=useState(12);const [pan,setPan]=useState({x:0,y:0});const [active,setActive]=useState(stays[0]?.id??'');const root=useRef<HTMLDivElement>(null);const drag=useRef<{x:number;y:number;px:number;py:number}|null>(null);const [width,setWidth]=useState(500);
+ const hotelSignature=stays.map(s=>s.id).join('|');
+ useEffect(()=>{setActive(stays[0]?.id??'');setPan({x:0,y:0});},[hotelSignature,query.to.code]);
+ useEffect(()=>{if(!root.current)return;const observer=new ResizeObserver(e=>setWidth(e[0].contentRect.width));observer.observe(root.current);return()=>observer.disconnect();},[]);
+ if(!city||!stays.length)return <p>No stays match these map filters.</p>;
+ const height=compact?240:420;const center=point(city.lat,city.lon,zoom);const left=center.x-width/2-pan.x;const top=center.y-height/2-pan.y;const stay=stays.find(s=>s.id===active)??stays[0];const tiles=[];const limit=2**zoom;
+ for(let x=Math.floor(left/256);x<=Math.floor((left+width)/256);x++)for(let y=Math.floor(top/256);y<=Math.floor((top+height)/256);y++)if(y>=0&&y<limit)tiles.push({x,y,tx:((x%limit)+limit)%limit});
+ const zoomBy=(n:number)=>{setZoom(z=>Math.min(16,Math.max(10,z+n)));setPan({x:0,y:0});};
+ return <div className="stay-map"><div className="hotel-tile-map" ref={root} style={{height}} tabIndex={0} role="region" aria-label={`Hotel map in ${city.city}. Use arrow keys to pan, plus or minus to zoom.`} onKeyDown={e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();setPan(p=>({x:p.x+(e.key==='ArrowLeft'?60:e.key==='ArrowRight'?-60:0),y:p.y+(e.key==='ArrowUp'?60:e.key==='ArrowDown'?-60:0)}));}if(e.key==='+')zoomBy(1);if(e.key==='-')zoomBy(-1);}} onPointerDown={e=>{if((e.target as HTMLElement).closest('button,a'))return;drag.current={x:e.clientX,y:e.clientY,px:pan.x,py:pan.y};e.currentTarget.setPointerCapture(e.pointerId);}} onPointerMove={e=>{if(drag.current)setPan({x:drag.current.px+e.clientX-drag.current.x,y:drag.current.py+e.clientY-drag.current.y});}} onPointerUp={()=>{drag.current=null;}} onPointerCancel={()=>{drag.current=null;}}>
+ {tiles.map(t=><img key={`${zoom}-${t.x}-${t.y}`} alt="" draggable={false} src={`https://tile.openstreetmap.org/${zoom}/${t.tx}/${t.y}.png`} style={{position:'absolute',left:t.x*256-left,top:t.y*256-top,width:256,height:256,maxWidth:'none',pointerEvents:'none'}}/>)}
+ {stays.map(s=>{const info=hotelInfo(s,query);const p=point(info.lat,info.lon,zoom);return <button type="button" key={s.id} className={`hotel-price-pin${s.id===stay.id?' active':''}`} style={{left:p.x-left,top:p.y-top}} aria-label={`${s.name}, ${format(s.pricePerNightGBP)} per night`} aria-pressed={s.id===stay.id} onClick={()=>setActive(s.id)}>{format(s.pricePerNightGBP)}</button>;})}
+ <div className="map-controls"><button type="button" aria-label="Zoom in" onClick={()=>zoomBy(1)} disabled={zoom===16}>+</button><button type="button" aria-label="Zoom out" onClick={()=>zoomBy(-1)} disabled={zoom===10}>−</button><button type="button" aria-label="Recenter map" onClick={()=>{setPan({x:0,y:0});setZoom(12);}}>⌖</button></div><span className="map-demo-note">Approximate demo locations</span><a className="map-attribution" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a></div>
+ {!compact&&<article className="map-stay-preview"><div><strong>{stay.name}</strong><p>{stay.area} · {hotelInfo(stay,query).stars} stars</p><small>{stay.nights} nights · from {format(stay.pricePerNightGBP*stay.nights)}</small></div><div className="map-stay-actions">{onDetails&&<button type="button" className="btn-outline sm" onClick={()=>onDetails(stay)}>See details</button>}<button type="button" className="btn-dark sm" onClick={()=>onSelect(stay)}>{selectedId===stay.id?'Change room':'Select room'}</button></div></article>}
+ </div>;
+}
