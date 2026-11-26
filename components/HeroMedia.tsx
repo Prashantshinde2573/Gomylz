@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { HERO_POSTER, HERO_VIDEO } from "@/lib/assets";
+import { HOMEPAGE_HERO_POSTER as HERO_POSTER, HERO_VIDEO } from "@/lib/assets";
 
 /** Full-bleed hero background: the hero video under a dark overlay so the text stays readable. */
 export function HeroMedia() {

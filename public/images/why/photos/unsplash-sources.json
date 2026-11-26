@@ -1,0 +1,56 @@
+[
+  {
+    "card": "voice",
+    "source": "https://unsplash.com/photos/TSRu3gwVdEQ",
+    "author": "Vitaly Gariev",
+    "image": "https://images.unsplash.com/photo-1753351056236-9b5d333dcc40?auto=format&fit=crop&fm=jpg&w=1400&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "file": "voice-unsplash.webp"
+  },
+  {
+    "card": "calendar",
+    "source": "https://unsplash.com/photos/8iVmzGhGn5U",
+    "author": "Vitaly Gariev",
+    "image": "https://images.unsplash.com/photo-1758873272955-3b066dd11c6b?auto=format&fit=crop&fm=jpg&w=1400&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "file": "calendar-unsplash.webp"
+  },
+  {
+    "card": "chat",
+    "source": "https://unsplash.com/photos/CPVWc-ZJg1o",
+    "author": "Vitaly Gariev",
+    "image": "https://images.unsplash.com/photo-1753351056838-143bc3e4cf03?auto=format&fit=crop&fm=jpg&w=1400&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "file": "chat-unsplash.webp"
+  },
+  {
+    "card": "suppliers",
+    "source": "https://unsplash.com/photos/6sHWbkS_QzQ",
+    "author": "Seiji D.",
+    "image": "https://images.unsplash.com/photo-1785495413060-4236406ea292?auto=format&fit=crop&fm=jpg&w=1400&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "file": "suppliers-unsplash.webp"
+  },
+  {
+    "card": "ticket",
+    "source": "https://unsplash.com/photos/bZg_EjTYMTM",
+    "author": "Gylain Omer",
+    "image": "https://images.unsplash.com/photo-1788631934038-cf693439986e?auto=format&fit=crop&fm=jpg&w=1400&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "file": "ticket-unsplash.webp"
+  },
+  {
+    "card": "support",
+    "source": "https://unsplash.com/photos/LSOIjuBiIuQ",
+    "author": "Vagaro",
+    "image": "https://images.unsplash.com/photo-1714079761488-e0c9b9ac4138?auto=format&fit=crop&fm=jpg&w=1400&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "file": "support-unsplash.webp"
+  }
+]

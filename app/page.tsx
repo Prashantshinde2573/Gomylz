@@ -111,7 +111,7 @@ export default function HomePage() {
           <h2 id="feature-title">Why plan with mylz?</h2>
           <p>Search the way you like, see your options, and know where to turn if plans change.</p>
         </div>
-        <div className="feature-bento">
+        <div className="feature-bento" tabIndex={0} role="group" aria-label="Mylz travel features">
           {FEATURES.map(({ image, title }) => (
             <article className={`feature-bento-card feature-bento-${image}`} key={title}>
               <img src={`/images/why/photos/${image}.webp`} alt="" loading="lazy" />

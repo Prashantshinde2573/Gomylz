@@ -273,6 +273,16 @@ export function SearchPanel() {
         </div>
       )}
     </div>
+    {mode === "ai" && (
+      <div className="hero-prompt-tips" role="group" aria-label="Try an example travel prompt">
+        <span>Try asking</span>
+        {["Weekend getaway to Dubai", "Beach escape for two", "Europe trip in May"].map(prompt => (
+          <button key={prompt} type="button" onClick={() => window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail: prompt }))}>
+            {prompt}
+          </button>
+        ))}
+      </div>
+    )}
     </div>
   );
 }

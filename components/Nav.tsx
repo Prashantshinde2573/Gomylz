@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { CurrencyPicker } from "./CurrencyPicker";
 import { createChat } from "@/lib/startChat";
 import { LOGO } from "@/lib/assets";
-import { AccountIcon, CloseIcon, FlyIcon, MenuIcon, PlusIcon } from "./Icons";
+import { AccountIcon, CloseIcon, MenuIcon, PlusIcon } from "./Icons";
 
 const HOME_LINKS = [
   ["Why Mylz?", "/#how"],
@@ -77,12 +77,7 @@ export function Nav({ solid = false }: { solid?: boolean } = {}) {
           <a className="btn-dark sm" href="https://gomylz.com/">Open GoMylz</a>
           <button type="button" className="link-btn" onClick={() => authDialog.current?.close()}>Continue as guest</button>
         </dialog>
-        {!inChat && (
-          <Link className="nav-cta btn-fly" href="/#start">
-            Plan my trip
-            <FlyIcon />
-          </Link>
-        )}
+
       </div>
       <button type="button" className="mobile-menu-trigger" aria-label="Open navigation menu" aria-haspopup="dialog" onClick={() => mobileMenu.current?.showModal()}>
         <MenuIcon size={19} />

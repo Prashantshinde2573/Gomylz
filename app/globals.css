@@ -655,26 +655,11 @@ mark {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  /* background:
-    linear-gradient(to bottom, rgb(0 0 0 / 42%), transparent 28%),
-    linear-gradient(to top, rgb(0 0 0 / 48%), transparent 50%),
-    #0000005c; */
-  /* background: linear-gradient(180deg, rgba(6, 23, 42, .24), rgba(6, 23, 42, .35) 55%, #0b1729), linear-gradient(90deg, rgba(6, 23, 42, .14), transparent 50%, rgba(6, 23, 42, .16)); */
-  background:
-    linear-gradient(180deg,
-      rgba(6, 23, 42, 0.45) 0px,
-      rgba(6, 23, 42, 0.20) 200px,
-      transparent 350px),
-    linear-gradient(180deg,
-      rgba(6, 23, 42, .24),
-      rgba(6, 23, 42, .35) 55%,
-      #0b1729),
-    linear-gradient(90deg,
-      rgba(6, 23, 42, .14),
-      transparent 50%,
-      rgba(6, 23, 42, .16));
-
-
+  /* One gentle tint keeps the skyline visible without stacking dark layers. */
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--navy-deep) 28%, transparent) 0%,
+    color-mix(in srgb, var(--navy-deep) 12%, transparent) 45%,
+    color-mix(in srgb, var(--navy-deep) 18%, transparent) 100%);
 }
 
 .hero-inner {
@@ -4351,30 +4336,7 @@ main h2 {
     gap: 18px;
   }
 
-  .hero-overlay {
-    /* background:
-      linear-gradient(to bottom, rgb(0 0 0 / 42%), transparent 28%),
-      linear-gradient(to top, rgb(0 0 0 / 48%), transparent 50%),
-      #06101fa1; */
-    /* background: linear-gradient(180deg, rgba(6, 23, 42, .24), rgba(6, 23, 42, .35) 55%, #0b1729), linear-gradient(90deg, rgba(6, 23, 42, .14), transparent 50%, rgba(6, 23, 42, .16)); */
 
-    background:
-      linear-gradient(180deg,
-        rgba(6, 23, 42, 0.45) 0px,
-        rgba(6, 23, 42, 0.20) 200px,
-        transparent 350px),
-      linear-gradient(180deg,
-        rgba(6, 23, 42, .24),
-        rgba(6, 23, 42, .35) 55%,
-        #0b1729),
-      linear-gradient(90deg,
-        rgba(6, 23, 42, .14),
-        transparent 50%,
-        rgba(6, 23, 42, .16));
-
-
-
-  }
 
 }
 
@@ -4751,7 +4713,8 @@ main h2 {
 }
 
 .travel-home .dest-card {
-  aspect-ratio: 3 / 5;
+  height: 370px;
+  aspect-ratio: auto;
   min-height: 0;
   flex-direction: column;
   align-items: stretch;
@@ -7026,4 +6989,78 @@ main h2 {
 .ig-section-head .ig-handle { margin-top: 12px; }
 @media (max-width: 760px) {
   .ig-section-head .ig-follow-link { white-space: normal; }
+}
+
+/* Quiet, editable examples sit below the hero's AI search field. */
+.hero-prompt-tips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 680px;
+  margin: 14px auto 0;
+}
+.hero-prompt-tips > span {
+  color: var(--mist);
+  font-size: 12px;
+  margin-right: 2px;
+}
+.hero-prompt-tips button {
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--white);
+  background: color-mix(in srgb, var(--navy-deep) 24%, transparent);
+  border: 1px solid color-mix(in srgb, var(--white) 32%, transparent);
+  border-radius: var(--r-pill, 999px);
+  padding: 8px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background .18s ease, border-color .18s ease;
+}
+.hero-prompt-tips button:hover {
+  background: color-mix(in srgb, var(--navy-deep) 48%, transparent);
+  border-color: var(--ice);
+}
+.hero-prompt-tips button:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+@media (max-width: 640px) {
+  .hero-prompt-tips { gap: 7px; margin-top: 12px; }
+  .hero-prompt-tips > span { flex-basis: 100%; text-align: center; }
+  .hero-prompt-tips button { font-size: 11px; padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-prompt-tips button { transition: none; } }
+
+/* Fixed desktop bento height; single-card swipe layout on mobile. */
+@media (min-width: 951px) {
+  .feature-section .feature-bento { height: 670px; }
+  .feature-section .feature-bento-copy {
+    padding-block-start: clamp(14px, 2vh, 24px);
+  }
+}
+.feature-bento:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 5px;
+}
+@media (max-width: 767px) {
+  .feature-section .feature-bento {
+    height: clamp(320px, 60svh, 440px);
+    grid-template-columns: none;
+    grid-template-rows: minmax(0, 1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--slate) var(--line);
+    padding-bottom: 12px;
+  }
+  .feature-section .feature-bento > * {
+    grid-area: auto;
+    min-width: 0;
+    min-height: 0;
+    scroll-snap-align: start;
+  }
 }

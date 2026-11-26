@@ -14,6 +14,14 @@ const HINTS = [
   "A hotel in Rome for 3 nights",
 ];
 
+// Examples stay in the placeholder; they never become the submitted query.
+const HERO_HINTS = [
+  "Flights from London to Lisbon next Friday",
+  "A long weekend in Lisbon for two",
+  "A hotel in Rome for 3 nights",
+  "A beach escape for two in January",
+];
+
 /** Other parts of the page can fill the hero box: window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail: "..." })) */
 export const PREFILL_EVENT = "mylz:prefill";
 
@@ -36,6 +44,50 @@ export function PromptForm({ variant }: Props) {
   const [value, setValue] = useState("");
   const [hint, setHint] = useState(0);
   const speech = useSpeech(setValue);
+  const [focused, setFocused] = useState(false);
+  const [typedHint, setTypedHint] = useState(HERO_HINTS[0].slice(0, 1));
+
+  useEffect(() => {
+    if (variant !== "hero" || focused || value || speech.listening) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let example = 0;
+    let character = 1;
+    let deleting = false;
+    const tick = () => {
+      const text = HERO_HINTS[example];
+      character += deleting ? -1 : 1;
+      setTypedHint(text.slice(0, character));
+      let delay = deleting ? 28 : 65;
+      if (!deleting && character === text.length) {
+        deleting = true;
+        delay = 2200;
+      } else if (deleting && character === 0) {
+        example = (example + 1) % HERO_HINTS.length;
+        deleting = false;
+        delay = 350;
+      }
+      timer = setTimeout(tick, delay);
+    };
+    const start = () => {
+      clearTimeout(timer);
+      if (motion.matches) {
+        setTypedHint(HERO_HINTS[0]);
+        return;
+      }
+      example = 0;
+      character = 1;
+      deleting = false;
+      setTypedHint(HERO_HINTS[0].slice(0, 1));
+      timer = setTimeout(tick, 65);
+    };
+    start();
+    motion.addEventListener("change", start);
+    return () => {
+      clearTimeout(timer);
+      motion.removeEventListener("change", start);
+    };
+  }, [variant, focused, value, speech.listening]);
 
   useEffect(() => {
     if (variant !== "cta" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -102,7 +154,7 @@ export function PromptForm({ variant }: Props) {
           )}
           <span className="sc-text">
             <label className="sr-only" htmlFor={inputId}>Your trip, in one sentence</label>
-            <input ref={inputRef} id={inputId} type="text" autoComplete="off" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Tell Mylz your trip in one sentence" />
+            <input ref={inputRef} id={inputId} type="text" autoComplete="off" value={value} onChange={(e) => setValue(e.target.value)} placeholder={focused || speech.listening ? "Tell Mylz your trip in one sentence" : typedHint} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
           </span>
         </div>
         <button className="search-btn" type="submit" aria-label="Search with MylzAI">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { cityForPlace } from "@/lib/airports";
 import { DESTINATION_PHOTOS } from "@/lib/assets";
-import { fmtShort, nightsBetween, toISO } from "@/lib/dates";
+import { nightsBetween, toISO } from "@/lib/dates";
 import { type Idea, trendingTrips } from "@/lib/demo";
 import { useCurrency } from "./CurrencyProvider";
 import { FlyIcon } from "./Icons";
@@ -45,7 +45,7 @@ export function Trending({ initial }: { initial: Idea[] }) {
               <span className="dest-text">
                 <strong>{t.city}</strong>
                 <small>
-                  {fmtShort(t.out)} – {fmtShort(t.back)} · {t.line}
+                  {t.line}
                 </small>
                 <b>
                   from {format(t.fromGBP)} <i>return</i>
