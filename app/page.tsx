@@ -27,7 +27,7 @@ const STAYS = [
 const FEATURES = [
   { image: "voice", title: "Search in your own words", copy: "Start with an idea or give Mylz the details you already know." },
   { image: "calendar", title: "Use the search form", copy: "Choose airports or a hotel destination, dates, and the people travelling." },
-  { image: "chat", title: "Keep comparing in chat", copy: "Review options beside the conversation and narrow down the choices." },
+  { image: "chat", title: "Book through MylzAI", copy: "Compare your options and book flights and stays through MylzAI." },
   { image: "suppliers", title: "Search across suppliers", copy: "Mylz brings airline and accommodation options into the same workspace." },
   { image: "ticket", title: "IATA TIDS registered", copy: "Mylz is listed as a travel sales intermediary and tickets through licensed partners." },
   { image: "support", title: "Speak to the Mylz team", copy: "Contact Mylz for help with changes, cancellations, and travel disruptions." },

@@ -6706,6 +6706,7 @@ main h2 {
   object-fit: cover;
   object-position: 35% center;
 }
+.journey-panel[data-step="4"] .journey-background { object-position: left center; }
 .journey-panel::before {
   content: "";
   position: absolute;
@@ -6731,7 +6732,7 @@ main h2 {
   .journey-panel .journey-content,
   .journey-panel[data-active="false"] .journey-content {
     position: absolute; inset: 24px auto 22px 88px;
-    width: calc(var(--journey-width, 100vw) - 318px);
+    width: calc(var(--journey-width, 100vw) - 406px);
     padding: 0; overflow: hidden;
   }
   .journey-content { transition: opacity .3s ease, transform .65s cubic-bezier(.22,.7,.2,1), visibility .3s; }
@@ -6740,7 +6741,7 @@ main h2 {
 .journey-number { display: grid; place-items: center; width: 47px; height: 33px; padding: 0; border-radius: 999px; transition: background-color .4s, color .4s; }
 .journey-panel[data-active="true"] .journey-number { padding: 0; }
 @media (max-width: 760px) {
-  .journey-panels { height: 568px; }
+  .journey-panels { height: 632px; }
   .journey-panel, .journey-panel[data-active="true"] { display: block; flex: 0 0 64px; min-height: 0; transition: flex-basis .7s cubic-bezier(.22,.7,.2,1); }
   .journey-panel[data-active="true"] { flex-basis: 440px; }
   .journey-tab { height: 64px; min-height: 64px; }

@@ -10,6 +10,7 @@ const STEPS = [
   { title: "Describe your trip" },
   { title: "Compare your options" },
   { title: "Pick the option that fits" },
+  { title: "Book with MylzAI" },
 ];
 
 export function BookingJourney() {
@@ -52,23 +53,23 @@ export function BookingJourney() {
     <section ref={root} className="booking-journey" id="demo" aria-labelledby="walkthrough-title">
       <header className="journey-heading">
         <div><span className="eyebrow">Book with mylzAI</span><h2 id="walkthrough-title">From an idea to options you can compare.</h2></div>
-        <p>Describe your trip, compare your options, and find your fit.</p>
+        <p>Describe your trip, compare your options, find your fit, and book with MylzAI.</p>
       </header>
       <div className="journey-panels"
         onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
         onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
         {STEPS.map(({ title }, index) => (
-          <div className="journey-panel" data-active={index === active} key={title}>
-            <img className="journey-background" src={`/images/journey/scenes/step-${index + 1}.webp`} alt="" loading="lazy" />
+          <div className="journey-panel" data-active={index === active} data-step={index + 1} key={title}>
+            <img className="journey-background" src={index === 3 ? "/images/airlines/journey/book.webp" : `/images/journey/scenes/step-${index + 1}.webp`} alt="" loading="lazy" />
             <button type="button" className="journey-tab" id={`${id}-tab-${index}`} aria-expanded={index === active} aria-controls={`${id}-panel-${index}`}
               onClick={() => choose(index)}
               onKeyDown={(event) => {
                 let next = index;
-                if (event.key === "ArrowRight") next = (index + 1) % 3;
-                else if (event.key === "ArrowLeft") next = (index + 2) % 3;
+                if (event.key === "ArrowRight") next = (index + 1) % STEPS.length;
+                else if (event.key === "ArrowLeft") next = (index + STEPS.length - 1) % STEPS.length;
                 else if (event.key === "Home") next = 0;
-                else if (event.key === "End") next = 2;
+                else if (event.key === "End") next = STEPS.length - 1;
                 else return;
                 event.preventDefault();
                 choose(next);
@@ -80,11 +81,16 @@ export function BookingJourney() {
               <h3>{title}</h3>
               <div className="journey-visual">
                 <div className="journey-ui">
-                  <div className="journey-ui-head"><SparkleIcon size={17} /><strong>mylzAI</strong><small>{["Your next adventure", "Your trip options", "Your shortlist"][index]}</small></div>
+                  <div className="journey-ui-head"><SparkleIcon size={17} /><strong>mylzAI</strong><small>{["Your next adventure", "Your trip options", "Your shortlist", "Ready to book"][index]}</small></div>
                   {index === 0 ? <>
                     <p className="journey-message journey-message-user">{PROMPT}</p>
                     <p className="journey-message">Lisbon sounds lovely. Let’s find flights and a stay for your weekend.</p>
                     <div className="journey-input"><MicIcon size={16} /><span>Tell Mylz your next idea</span><FlyIcon /></div>
+                  </> : index === 3 ? <>
+                    <p className="journey-message">Your flights and stay, ready to review and book through MylzAI.</p>
+                    <div className="journey-result"><CheckIcon /><span><strong>London → Lisbon</strong><small>Return flights · 2 travellers</small></span></div>
+                    <div className="journey-result"><BedIcon size={16}/><span><strong>Guesthouse in Alfama</strong><small>Lisbon · 3 nights</small></span></div>
+                    <Link className="journey-start" href={`/chat?q=${encodeURIComponent(PROMPT)}`}>Book with MylzAI <FlyIcon /></Link>
                   </> : <>
                     <div className="journey-result"><FlyIcon /><span><strong>London → Lisbon</strong><small>18:15 · Direct · Return flight</small></span><b>{format(204)}</b>{index === 2 && <CheckIcon />}</div>
                     {index === 1 && <div className="journey-result"><FlyIcon /><span><strong>London → Lisbon</strong><small>07:30 · Direct · Return flight</small></span><b>{format(178)}</b></div>}
