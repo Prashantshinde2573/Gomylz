@@ -7,8 +7,8 @@ export const LOGO = { src: "/images/mylz-wordmark.svg", width: 103, height: 36 }
 export const HERO_POSTER = "/videos/gomylz-hero-poster.jpg";
 
 /** Uploaded skyline clip, optimized to 1080p with no audio. */
-export const HERO_VIDEO = "/videos/hero-skyline.mp4";
-export const HOMEPAGE_HERO_POSTER = "/videos/hero-skyline-poster.jpg";
+export const HERO_VIDEO = "/videos/new%20video%20hero.mp4";
+export const HOMEPAGE_HERO_POSTER = "/videos/videohero-poster.jpg";
 
 export const BACKERS = [
   // Heights balance each logo's visual weight inside its tile.

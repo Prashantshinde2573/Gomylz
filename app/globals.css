@@ -655,11 +655,8 @@ mark {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  /* One gentle tint keeps the skyline visible without stacking dark layers. */
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--navy-deep) 28%, transparent) 0%,
-    color-mix(in srgb, var(--navy-deep) 12%, transparent) 45%,
-    color-mix(in srgb, var(--navy-deep) 18%, transparent) 100%);
+  /* A light veil supports black text without darkening the footage. */
+  background: linear-gradient(180deg, rgb(255 255 255 / 18%), rgb(255 255 255 / 8%) 50%, rgb(255 255 255 / 15%));
 }
 
 .hero-inner {
@@ -7233,3 +7230,16 @@ main h2 {
 .footer .cta-form .go:hover { background: var(--teal); }
 .footer .footer-pitch h2 { color: var(--white); }
 .footer .footer-legal { font-size: 11px; padding-top: 22px; margin-top: 8px; }
+
+/* Homepage hero pairs the bright video with dark, readable content. */
+.hero, .hero-head h1, .hero-head h1 em, .hero-sub,
+.hero .booking-switch, .hero-prompt-tips > span, .hero-prompt-tips button { color: #000; text-shadow: none; }
+.hero .search-card { background: var(--white); }
+.hero .search-card input, .hero .search-card textarea { color: #000; }
+.hero .search-card input::placeholder, .hero .search-card textarea::placeholder { color: #000; opacity: .65; }
+.hero-prompt-tips button { background: rgb(255 255 255 / 70%); border-color: rgb(0 0 0 / 14%); }
+.hero-prompt-tips button:hover { background: var(--white); border-color: rgb(0 0 0 / 35%); }
+.nav.is-over-hero:has(+ .travel-home),
+.nav.is-over-hero:has(+ .travel-home) :is(.nav-links a, .nav-link, .currency, .mobile-menu-trigger) { color: #000; }
+.nav.is-over-hero:has(+ .travel-home) :is(.currency, .mobile-menu-trigger) { background: rgb(255 255 255 / 75%); border-color: rgb(0 0 0 / 12%); }
+.nav.is-over-hero:has(+ .travel-home) .logo img { filter: brightness(0); }

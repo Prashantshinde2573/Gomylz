@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HOMEPAGE_HERO_POSTER as HERO_POSTER, HERO_VIDEO } from "@/lib/assets";
 
-/** Full-bleed hero background: the hero video under a dark overlay so the text stays readable. */
+/** Full-bleed hero background: the hero video with a soft light veil for readable dark text. */
 export function HeroMedia() {
   const ref = useRef<HTMLVideoElement>(null);
   const [videoOk, setVideoOk] = useState(true);
