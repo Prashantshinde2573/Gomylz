@@ -4943,14 +4943,28 @@ main h2 {
 }
 
 .footer {
+  position: relative;
+  isolation: isolate;
   margin: 0;
   border-radius: 0;
-  background: radial-gradient(ellipse at 0 0, var(--navy) 0%, var(--ink) 65%);
-  border-top: 1px solid rgb(255 255 255 / 12%);
+  background: var(--navy-deep);
+  border-top: 0;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: start;
-  gap: clamp(26px, 4vw, 54px) clamp(16px, 3vw, 40px);
-  padding-block: var(--section-y) 24px;
+  gap: 38px clamp(20px, 4vw, 64px);
+  padding: clamp(140px, 15vw, 210px) var(--gutter) 38px;
+  color: var(--white);
+  overflow: hidden;
+}
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgb(244 183 137 / 45%) 0%, rgb(15 38 55 / 12%) 22%, rgb(10 29 44 / 80%) 47%, var(--navy-deep) 95%),
+    url("/images/airlines/sky.webp") center 78% / cover no-repeat;
+  pointer-events: none;
 }
 
 .footer-banner {
@@ -4959,19 +4973,20 @@ main h2 {
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   align-items: center;
   gap: 24px clamp(24px, 5vw, 64px);
-  padding: clamp(20px, 5vw, 64px);
-  min-height: clamp(280px, 30vw, 390px);
-  border: 1px solid rgb(255 255 255 / 14%);
-  border-radius: var(--r-lg);
+  padding: 0 0 36px;
+  min-height: 0;
+  border: 0;
+  border-bottom: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 0;
   color: var(--white);
-  background: linear-gradient(105deg, rgb(3 16 29 / 88%), rgb(6 23 42 / 66%)), url("/images/chat/takeoff-at-dusk.webp") center / cover;
+  background: transparent;
 }
 
 .footer-pitch h2 {
   margin: 12px 0;
-  font-size: clamp(34px, 5vw, 64px);
-  line-height: 1;
-  letter-spacing: -.055em;
+  font-size: clamp(34px, 3.7vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
 }
 
 .footer-pitch p,
@@ -5001,7 +5016,7 @@ main h2 {
 
 .footer nav strong {
   color: var(--white);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   font-size: 13px;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -5113,7 +5128,7 @@ main h2 {
 }
 
 .footer-legal {
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 70%, transparent);
 }
 
 /* Hero video readability */
@@ -7200,3 +7215,20 @@ main h2 {
 .visual-ticket .mini-ticket { background: linear-gradient(135deg,var(--white) 52%,var(--art-tint)); }
 .visual-voice .mini-people img:first-child { background: var(--art-tint); border-color: var(--art-tint); }
 .visual-voice .mini-people img:nth-child(2) { border-color: var(--ice); }
+
+.footer .footer-logo { filter: brightness(0) invert(1); }
+.footer nav a { color: rgb(255 255 255 / 80%); font-size: 13px; }
+.footer nav a:hover { color: var(--white); }
+@media (max-width: 690px) {
+ .footer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; padding-top: 110px; }
+ .footer::before { background-position: center, 52% top; }
+ .footer-banner { padding-bottom: 28px; }
+}
+
+.footer .cta-form { border-radius: 20px; padding: 6px 6px 6px 20px; gap: 10px; box-shadow: 0 8px 28px rgb(0 0 0 / 12%); }
+.footer .cta-form input { height: 42px; font-size: 14px; }
+.footer .cta-form .mic, .footer .cta-form .go { width: 40px; height: 40px; flex: none; border-radius: 50%; }
+.footer .cta-form .go { background: var(--navy-deep); color: var(--white); }
+.footer .cta-form .go:hover { background: var(--teal); }
+.footer .footer-pitch h2 { color: var(--white); }
+.footer .footer-legal { font-size: 11px; padding-top: 22px; margin-top: 8px; }
