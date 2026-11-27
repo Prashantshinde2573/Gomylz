@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { BadgeCheck, CircleDollarSign, Globe2, Headphones, Layers3, MessageCircle, ShieldCheck, Sparkles, Ticket, TrendingUp } from "lucide-react";
 import { FlyIcon } from "@/components/Icons";
-import { DiscoveryCall } from "@/components/airlines/DiscoveryCall";
 import { Nav } from "@/components/Nav";
 import { EditorialImageMotion } from "@/components/airlines/EditorialImageMotion";
 import { AirlineMotion } from "@/components/airlines/AirlineMotion";
@@ -144,7 +143,7 @@ export default function AirlinesPage() {
         </div>
       </section>
 
-      <section className={styles.contact} id="airline-contact" aria-labelledby="contact-title" data-air-reveal><span className={styles.eyebrow}>Pilot first. Prove the lift. Then scale.</span><h2 id="contact-title">Let’s start with<br/><em>your airline.</em></h2><p>See your airline’s AI in action. You keep the lion’s share.<br/>Mylz takes a small fee on results.</p><div className={styles.actions}><DiscoveryCall/><a className="btn-outline on-dark" href="#airline-experience">Explore the passenger experience <FlyIcon/></a></div><a className={styles.contactEmail} href="mailto:partners@gomylz.com">partners@gomylz.com</a><p className={styles.contactNote}>We’ll walk you through the layer on your own routes and scope a pilot that fits your stack.</p></section>
+
     </main>
   </div>;
 }

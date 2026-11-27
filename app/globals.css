@@ -7252,3 +7252,19 @@ main h2 {
 .nav.is-over-hero:has(+ .travel-home) :is(.nav-links a, .nav-link, .currency, .mobile-menu-trigger) { color: #000; }
 .nav.is-over-hero:has(+ .travel-home) :is(.currency, .mobile-menu-trigger) { background: rgb(255 255 255 / 75%); border-color: rgb(0 0 0 / 12%); }
 .nav.is-over-hero:has(+ .travel-home) .logo img { filter: brightness(0); }
+
+/* Airlines partnership content lives within the shared photographic footer. */
+.footer-airline-cta { grid-column: 1 / -1; text-align: center; padding: 0 0 40px; border-bottom: 1px solid rgb(255 255 255 / 18%); }
+.footer-airline-cta .eyebrow { color: var(--ice); }
+.footer-airline-cta h2 { color: var(--white); font-size: clamp(38px, 4.6vw, 62px); line-height: 1.1; margin: 16px 0 22px; }
+.footer-airline-cta h2 em { font-style: normal; }
+.footer-airline-cta > p { color: var(--mist); font-size: 17px; line-height: 1.55; }
+.footer-airline-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 26px; }
+.footer-airline-cta a.footer-airline-email { color: var(--ice); margin-top: 24px; text-decoration: underline; text-underline-offset: 4px; }
+.footer-airline-cta > .footer-airline-note { font-size: 12px; max-width: 60ch; margin: 16px auto 0; }
+@media (max-width: 580px) {
+ .footer-airline-cta > p { font-size: 15px; }
+ .footer-airline-actions { flex-direction: column; gap: 14px; }
+ .footer-airline-actions > * { max-width: 100%; }
+ .footer-airline-actions a { white-space: normal; text-align: center; }
+}

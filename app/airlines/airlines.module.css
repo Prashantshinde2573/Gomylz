@@ -334,33 +334,14 @@
 .technology { margin-top: var(--s-7); padding-top: var(--s-6); }
 .technology > div { gap: var(--s-5); margin-top: var(--s-6); }
 .contact {
-  isolation: isolate;
-  min-height: 640px;
-  padding: var(--section-y) var(--gutter);
+  min-height: 0;
+  padding: var(--section-y) var(--gutter) var(--s-7);
   background: var(--ground);
   border-top: 0;
 }
-.contact::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, color-mix(in srgb,var(--navy) 8%,transparent),color-mix(in srgb,var(--navy) 12%,transparent) 45%,color-mix(in srgb,var(--navy) 50%,transparent)),
-    url("/images/airlines/contact-sunset.webp") center bottom / cover no-repeat;
-  filter: saturate(.92);
-}
-.page .contact h2, .contact > p { color: var(--white); }
-.contact .eyebrow, .contactEmail { color: var(--ice); }
-.contact :global(.btn-accent) { background: var(--white); color: var(--navy); }
-.contact :global(.btn-accent):hover { background: var(--mist); }
-@media (max-width: 580px) {
-  .contact { min-height: 0; }
-  .contact::before {
-    background-position: center, right bottom;
-  }
-}
+.page .contact h2 { color: var(--navy); }
+.contact > p { color: var(--slate); }
+.contact .eyebrow, .contactEmail { color: var(--teal); }
 .contact > p { margin-top: var(--s-5); line-height: 1.55; }
 .contact .actions { margin-top: var(--s-5); gap: var(--s-5); }
 /* Primary actions outside the preserved hero share the homepage button system. */
