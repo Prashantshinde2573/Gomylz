@@ -6,9 +6,9 @@ export const LOGO = { src: "/images/mylz-wordmark.svg", width: 103, height: 36 }
 /** First frame of the hero video: shown while it loads and to visitors who prefer less motion. */
 export const HERO_POSTER = "/videos/gomylz-hero-poster.jpg";
 
-/** Uploaded skyline clip, optimized to 1080p with no audio. */
-export const HERO_VIDEO = "/videos/new%20video%20hero.mp4";
-export const HOMEPAGE_HERO_POSTER = "/videos/videohero-poster.jpg";
+/** Current homepage background video and its matching still frame. */
+export const HERO_VIDEO = "/videos/herovideo3.mp4";
+export const HOMEPAGE_HERO_POSTER = "/videos/herovideo3-poster.jpg";
 
 export const BACKERS = [
   // Heights balance each logo's visual weight inside its tile.

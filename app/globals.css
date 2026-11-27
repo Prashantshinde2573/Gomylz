@@ -3478,7 +3478,16 @@ main h2 {
 
 .hero-photo,
 .hero-video {
-  object-position: center 55%;
+  /* Enlarge from the left edge to move the subject right without exposing a seam. */
+  width: 112%;
+  max-width: none;
+  object-position: left 55%;
+}
+@media (max-width: 760px) {
+  .hero-photo, .hero-video {
+    width: 100%;
+    object-position: 42% 55%;
+  }
 }
 
 .hero-inner {
