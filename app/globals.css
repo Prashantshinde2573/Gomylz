@@ -4962,6 +4962,7 @@ main h2 {
   inset: 0;
   z-index: -1;
   background:
+    linear-gradient(180deg, var(--ground) 0, color-mix(in srgb, var(--ground) 88%, transparent) 28px, color-mix(in srgb, var(--ground) 40%, transparent) 76px, transparent 140px),
     linear-gradient(180deg, rgb(244 183 137 / 45%) 0%, rgb(15 38 55 / 12%) 22%, rgb(10 29 44 / 80%) 47%, var(--navy-deep) 95%),
     url("/images/airlines/sky.webp") center 78% / cover no-repeat;
   pointer-events: none;
